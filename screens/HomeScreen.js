@@ -11,11 +11,14 @@ import {
   View,
   ListView,
   AppRegistry,
-  AlertIOS
+  AlertIOS,
+  TextInput
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 import { LoginScreen } from './LoginScreen';
+import Database from '../api/database';
+import CommonStyle from "../constants/common";
 import * as firebase from 'firebase';
 const StatusBar = require('../components/StatusBar');
 const ActionButton = require('../components/ActionButton');
@@ -39,10 +42,30 @@ export default class HomeScreen extends Component {
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
-      })
+      }),
+      uid: "",
+      todo: "",
+      todoForm: ""
     };
+    this.logout = this.logout.bind(this);
+    this.saveTodo = this.saveTodo.bind(this);
+    
     this.itemsRef = this.getRef().child('items');
   }
+
+    async logout() {
+
+        try {
+
+            await firebase.auth().signOut();
+
+            this.props.navigator.push('login')
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
 
   getRef() {
     return firebaseApp.database().ref();
@@ -67,9 +90,42 @@ export default class HomeScreen extends Component {
     });
   }
 
-  componentDidMount() {
-    this.listenForItems(this.itemsRef);
-  }
+  async componentDidMount() {
+
+        this.listenForItems(this.itemsRef);
+
+        try {
+
+            // Get User Credentials
+            let user = await firebase.auth().currentUser;
+
+            // Listen for Mobile Changes
+            Database.listenUserTodo(user.uid, (todoNumber) => {
+                this.setState({
+                    todo: todoNumber,
+                    todoForm: todoNumber
+                });
+            });
+
+            this.setState({
+                uid: user.uid
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+     saveTodo() {
+
+        // Set Mobile
+        if (this.state.uid && this.state.todoForm) {
+            Database.setUserTodo(this.state.uid, this.state.todoForm);
+        }
+
+    }
+
 
   render() {
    
@@ -77,7 +133,20 @@ export default class HomeScreen extends Component {
       <View style={styles.container}>
 
         <StatusBar title="Grocery List" />
-
+        <View>
+           <Text style={styles.heading}>Hello UserId: {this.state.uid}</Text>
+                    <Text style={styles.heading}>Mobile Number (From Database): {this.state.todo}</Text>
+        </View>
+        <View style={styles.form}>
+                        <TextInput
+                          style = {{height: 20, width: 300}}
+                            value={this.state.todoForm}
+                            onChangeText={(todoForm) => this.setState({todoForm})}
+                        />
+                        <TouchableOpacity onPress={this.saveTodo} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
+                            <Text>Save</Text>
+                        </TouchableOpacity>
+                    </View>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
@@ -85,7 +154,8 @@ export default class HomeScreen extends Component {
           style={styles.listview}/>
 
         <ActionButton onPress={this._addItem.bind(this)} title="Add" />
-
+        <ActionButton onPress={this.logout} title="Logout" />
+    
       </View>
     )
   }
