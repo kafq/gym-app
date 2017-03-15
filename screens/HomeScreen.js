@@ -12,7 +12,7 @@ import {
   ListView,
   AppRegistry,
   AlertIOS,
-  TextInput
+  TextInput,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -90,14 +90,17 @@ export default class HomeScreen extends Component {
     });
   }
 
-  async componentDidMount() {
+componentWillMount() {
 
-        this.listenForItems(this.itemsRef);
+   this.listenForItems(this.itemsRef);
+   this.getProfile();
 
-        try {
+}
 
-            // Get User Credentials
-            let user = await firebase.auth().currentUser;
+
+   // Get User Credentials
+async getProfile() {    
+  let user = firebase.auth().currentUser;
 
             // Listen for Mobile Changes
             Database.listenUserTodo(user.uid, (todoNumber) => {
@@ -111,12 +114,7 @@ export default class HomeScreen extends Component {
                 uid: user.uid
             });
 
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-
+}
      saveTodo() {
 
         // Set Mobile
@@ -140,7 +138,6 @@ export default class HomeScreen extends Component {
         <View style={styles.form}>
                         <TextInput
                           style = {{height: 20, width: 300}}
-                            value={this.state.todoForm}
                             onChangeText={(todoForm) => this.setState({todoForm})}
                         />
                         <TouchableOpacity onPress={this.saveTodo} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
@@ -152,7 +149,7 @@ export default class HomeScreen extends Component {
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.listview}/>
-
+         
         <ActionButton onPress={this._addItem.bind(this)} title="Add" />
         <ActionButton onPress={this.logout} title="Logout" />
     
