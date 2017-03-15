@@ -137,36 +137,30 @@ async loginWithFacebook() {
                     <View style={styles.form}>
                         <FormLabel style={{alignSelf: 'flex-start', color: "#CCC"}}>Email</FormLabel>
                         <FormInput
-                        placeholder={"Enter your email here"}
-                        placeholderTextColor={"#CCC"}
-                        containerStyle={{
-                            backgroundColor: 'transparent',
-                            borderBottomWidth: 1,
-                            borderColor: 1
-                            }}
-                        inputStyle = {{
-                            color: '#fff'
-                            }} 
-                        onChangeText = {(email) => this.setState({email})}/>
+                            placeholder={"Enter your email"}
+                            placeholderTextColor={"#CCC"}
+                            style={styles.inputContainerStyle}
+                            inputStyle = {{ color: '#fff' }} 
+                            onChangeText = {(email) => this.setState({email})}/>
+                        
                         <FormLabel style={{alignSelf: 'flex-start', color: "#CCC"}}>Password</FormLabel>
                         <FormInput 
-                        placeholder={"Enter your password here"}
-                        placeholderTextColor={"#CCC"}
-                        containerStyle={{
-                            backgroundColor: 'transparent', 
-                            zIndex: 2,
-                            }}
-                        inputStyle = {{
-                            color: '#fff'
-                            }} 
-                        onChangeText = {(password) => this.setState({password})}/>
+                            placeholder={"Enter your password"}
+                            placeholderTextColor={"#CCC"}
+                            style={styles.inputContainerStyle}
+                            inputStyle = {{ color: '#fff' }} 
+                            onChangeText = {(password) => this.setState({password})}/>
                         
                         <FormValidationMessage>{this.state.response}</FormValidationMessage>
 
                         <Button
-buttonStyle={styles.loginButton}
-onPress={this.login}
-title='Sign in' />
+                            buttonStyle={styles.loginButton}
+                            onPress={this.login}
+                            title='Sign in' />
+                        <Button
+                            buttonStyle={styles.loginButton}
+                            onPress={this.signup}
+                            title='Sign up' />
                     </View>
                     <View style={styles.submit}>
                         <TouchableOpacity onPress={this.signup}  textStyle={{fontSize: 18}}>
@@ -229,7 +223,13 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         borderWidth: 1,
         alignSelf: 'center',
-        marginTop: 30,
+        marginTop: 10,
         backgroundColor: 'transparent'
+    },
+    inputContainerStyle: {
+        backgroundColor: 'transparent',
+        borderBottomWidth: 1,
+        borderColor: '#fff',
+        color: '#fff'
     }
 });
