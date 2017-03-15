@@ -59,7 +59,7 @@ var styles = StyleSheet.create({
     backgroundColor: constants.actionColor,
     borderColor: 'transparent',
     borderWidth: 1,
-    paddingLeft: 16,
+    paddingLeft: 0,
     paddingTop: 14,
     paddingBottom: 16,
   },

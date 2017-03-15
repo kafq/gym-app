@@ -6,13 +6,23 @@ import {
     StyleSheet,
     dismissKeyboard,
     TouchableOpacity,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    Keyboard,
+    Image
 } from "react-native";
+
+import Expo from 'expo';
 
 import React, {Component} from "react";
 import * as firebase from "firebase";
 
-import CommonStyle from "../constants/common";
+//import CommonStyle from "../constants/common";
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
 
 export default class LoginScreen extends Component {
     constructor(props) {
@@ -71,16 +81,38 @@ export default class LoginScreen extends Component {
 
     }
 
+async loginWithFacebook() {
+  const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
+    '1767868336864920',
+    { permissions: ['public_profile'] }
+  );
+
+  if (type === 'success') {
+    // Build Firebase credential with the Facebook access token.
+    const credential = firebase.auth.FacebookAuthProvider.credential(token);
+
+    // Sign in with credential from the Facebook user.
+    firebase.auth().signInWithCredential(credential).catch((error) => {
+      // Handle Errors here.
+    });
+  }
+}
+
     render() {
 
         return (
-            <TouchableWithoutFeedback>
-                <View style={CommonStyle.container}>
-                    <View style={styles.formGroup}>
-                        <Text style={styles.title}>Firebase Sample</Text>
+                /*<Image
+                    style={styles.backgroundImage}
+                    source={require('../assets/images/login_background.png')}
+                >
+                <View style={styles.containerCentered}>
+                        <View style={styles.textGroup}>
+                            <Text style={styles.title}>Atlite</Text>
+                            <Text style={styles.description}>The best way to get right instructional videos, lorem ipsum dolor sit amet, in vina veritas per aspera et astra</Text>
+                        </View>
                         <TextInput
                             placeholder={"Email Address"}
-                            style={{height: 20, width: 200}}
+                            style={{height: 20, width: 200, color: '#fff'}}
                             onChangeText={(email) => this.setState({email})}
                             keyboardType="email-address"
                             autoCapitalize="none"
@@ -94,38 +126,88 @@ export default class LoginScreen extends Component {
                         />
 
                         <View style={styles.submit}>
-                            <TouchableOpacity onPress={this.signup} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
-                                <Text>Sign up</Text>
+                            <TouchableOpacity onPress={this.signup}  textStyle={{fontSize: 18}}>
+                                <Text style={styles.caption} >Sign up</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={this.login} style={styles.buttons} textStyle={{fontSize: 18}}>
-                                <Text>Login</Text>
+                            <TouchableOpacity onPress={this.loginWithFacebook} style={styles.buttons} textStyle={{fontSize: 18}}>
+                                <Text style={styles.caption}>Login</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
-                    <View>
+
+     <View>
                         <Text style={styles.response}>{this.state.response}</Text>
                     </View>
+                    </View>
+                   
+                
+                </Image>*/
+                <View style={styles.containerCentered}>
+
+                <Image
+                    style={styles.backgroundImage}
+                    source={require('../assets/images/login_background.png')}
+                >
+                                <View style={styles.textGroup}>
+                            <Text style={styles.title}>Atlite</Text>
+                            <Text style={styles.description}>The best way to get right instructional videos, lorem ipsum dolor sit amet, in vina veritas per aspera et astra</Text>
+                        </View>
+                        <TextInput
+                            placeholder={"Email Address"}
+                            style={{height: 20, width: 200, color: '#fff'}}
+                            onChangeText={(email) => this.setState({email})}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                        <TextInput
+                            placeholder={"Password"}
+                               style={{height: 20, width: 100}}
+                            onChangeText={(password) => this.setState({password})}
+                            password={true}
+                            autoCapitalize="none"
+                        />
+
+                        <View style={styles.submit}>
+                            <TouchableOpacity onPress={this.signup}  textStyle={{fontSize: 18}}>
+                                <Text style={styles.caption} >Sign up</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={this.loginWithFacebook} style={styles.buttons} textStyle={{fontSize: 18}}>
+                                <Text style={styles.caption}>Login</Text>
+                            </TouchableOpacity>
+                        </View>
+                </Image>
                 </View>
-            </TouchableWithoutFeedback>
         );
     }
 }
 
 const styles = StyleSheet.create({
-
-    formGroup: {
-        padding: 50
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover',
+        zIndex: -1
     },
-
+    containerCentered: {
+        flex: 1,
+        backgroundColor: '#000',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textGroup: {
+        width: 300,
+        marginHorizontal: 40
+    },
     title: {
         paddingBottom: 16,
         textAlign: "center",
-        color: "#000",
-        fontSize: 35,
+        color: "#fff",
+        fontSize: 45,
         fontWeight: "bold",
-        opacity: 0.8,
     },
-
+    description: {
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 14,
+    },
     submit: {
         paddingTop: 30
     },
@@ -133,6 +215,5 @@ const styles = StyleSheet.create({
     response: {
         textAlign: "center",
         paddingTop: 0,
-        padding: 50
     }
 });
