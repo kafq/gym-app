@@ -17,7 +17,7 @@ import {
 
 import { MonoText } from '../components/StyledText';
 import { LoginScreen } from './LoginScreen';
-import Database from '../api/database';
+
 import CommonStyle from "../constants/common";
 import * as firebase from 'firebase';
 const StatusBar = require('../components/StatusBar');
@@ -25,15 +25,8 @@ const ActionButton = require('../components/ActionButton');
 const ListItem = require('../components/ListItem');
 const styles = require('../constants/styles.js');
 
-// Initialize Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyCIoYGPPcwoXacoD8TNm6t9YzgkNcPSh-U",
-    authDomain: "gymnext-a9231.firebaseapp.com",
-    databaseURL: "https://gymnext-a9231.firebaseio.com",
-    storageBucket: "gymnext-a9231.appspot.com",
-    messagingSenderId: "1054828973938"
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+import Firebase from "../api/firebase";
+import Database from '../api/database';
 
 export default class LinksScreen extends Component {
   
@@ -68,7 +61,7 @@ export default class LinksScreen extends Component {
     }
 
   getRef() {
-    return firebaseApp.database().ref();
+    return firebase.database().ref();
   }
 
   listenForItems(itemsRef) {

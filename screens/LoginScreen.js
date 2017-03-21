@@ -13,19 +13,16 @@ import {
 
 import Expo from 'expo';
 
-import { SocialIcon, Button } from 'react-native-elements';
-import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
+import { 
+    FormLabel,
+    FormInput,
+    FormValidationMessage,
+    SocialIcon,
+    Button 
+} from 'react-native-elements';
 
 import React, {Component} from "react";
 import * as firebase from "firebase";
-
-//import CommonStyle from "../constants/common";
-
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginButton,
-  AccessToken
-} = FBSDK;
 
 export default class LoginScreen extends Component {
     constructor(props) {
@@ -39,6 +36,7 @@ export default class LoginScreen extends Component {
 
         this.signup = this.signup.bind(this);
         this.login = this.login.bind(this);
+        this.loginWithFacebook = this.loginWithFacebook.bind(this);
     }
 
     async signup() {
@@ -51,9 +49,9 @@ export default class LoginScreen extends Component {
                 response: "account created"
             });
 
-            setTimeout(() => {
+           /* setTimeout(() => {
                 this.props.navigator.push('home');
-            }, 1000);
+            }, 1000);*/
 
         } catch (error) {
             this.setState({
@@ -72,9 +70,9 @@ export default class LoginScreen extends Component {
                 response: "Logged In!"
             });
 
-            setTimeout(() => {
+            /*setTimeout(() => {
                  this.props.navigator.push('home');
-            }, 1000);
+            }, 1000);*/
 
         } catch (error) {
             this.setState({
@@ -84,26 +82,25 @@ export default class LoginScreen extends Component {
 
     }
 
-async loginWithFacebook() {
-  const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
-    '1767868336864920',
-    { permissions: ['public_profile'] }
-  );
-
-  if (type === 'success') {
-    // Build Firebase credential with the Facebook access token.
-    const credential = firebase.auth.FacebookAuthProvider.credential(token);
-
-    // Sign in with credential from the Facebook user.
-    firebase.auth().signInWithCredential(credential).then(() => {
-         setTimeout(() => {
-                 this.props.navigator.push('home');
-            }, 1000);
-    }).catch((error) => {
-      // Handle Errors here.
-    });
-  }
-}
+    async loginWithFacebook() {
+        const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
+            '1767868336864920',
+            { permissions: ['public_profile', 'email'] }
+        );
+    
+    if (type === 'success') {
+        // Build Firebase credential with the Facebook access token.
+        const credential = firebase.auth.FacebookAuthProvider.credential(token);
+        // Sign in with credential from the Facebook user.
+        firebase.auth().signInWithCredential(credential).then(() => {
+            setTimeout(() => {
+                    this.props.navigator.push('home');
+                }, 1000);
+        }).catch((error) => {
+        // Handle Errors here.
+        });
+        }
+    }
 
     render() {
 
@@ -120,20 +117,7 @@ async loginWithFacebook() {
                         <Text style={styles.title}>Atlite</Text>
                         <Text style={styles.description}>The best way to get right instructional videos, lorem ipsum dolor sit amet, in vina veritas per aspera et astra</Text>
                     </View>
-                    <TextInput
-                        placeholder={"Email Address"}
-                        style={{height: 20, width: 200, color: '#fff'}}
-                        onChangeText={(email) => this.setState({email})}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
-                    <TextInput
-                        placeholder={"Password"}
-                        style={{height: 20, width: 100}}
-                        onChangeText={(password) => this.setState({password})}
-                        password={true}
-                        autoCapitalize="none"
-                    />
+                    
                     <View style={styles.form}>
                         <FormLabel style={{alignSelf: 'flex-start', color: "#CCC"}}>Email</FormLabel>
                         <FormInput
@@ -141,6 +125,7 @@ async loginWithFacebook() {
                             placeholderTextColor={"#CCC"}
                             style={styles.inputContainerStyle}
                             inputStyle = {{ color: '#fff' }} 
+                            keyboardType="email-address"
                             onChangeText = {(email) => this.setState({email})}/>
                         
                         <FormLabel style={{alignSelf: 'flex-start', color: "#CCC"}}>Password</FormLabel>
@@ -148,6 +133,7 @@ async loginWithFacebook() {
                             placeholder={"Enter your password"}
                             placeholderTextColor={"#CCC"}
                             style={styles.inputContainerStyle}
+                            secureTextEntry={true}
                             inputStyle = {{ color: '#fff' }} 
                             onChangeText = {(password) => this.setState({password})}/>
                         
@@ -162,15 +148,6 @@ async loginWithFacebook() {
                             onPress={this.signup}
                             title='Sign up' />
                     </View>
-                    <View style={styles.submit}>
-                        <TouchableOpacity onPress={this.signup}  textStyle={{fontSize: 18}}>
-                            <Text style={styles.caption} >Sign up</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.login} style={styles.buttons} textStyle={{fontSize: 18}}>
-                            <Text style={styles.caption}>Login</Text>
-                        </TouchableOpacity>
-                    </View>
-
                     <SocialIcon
                         title='Sign In With Facebook'
                         onPress={this.loginWithFacebook}

@@ -6,19 +6,73 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  Text,
+  TouchableOpacity
 } from 'react-native';
+import  LoginScreen  from './screens/LoginScreen';
 import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-
+import * as firebase from "firebase";
+import Firebase from "./api/firebase";
 import Router from './navigation/Router';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
 class AppContainer extends React.Component {
+
   state = {
     appIsReady: false,
+    isLoggedIn: false
   };
+  
+  constructor(props) {
+    super(props);
 
-  componentWillMount() {
+    Firebase.initialise();
+
+    this.getInitialView();
+
+    this.state = {
+      userLoaded: false,
+      initialView: null,
+      appIsReady: false,
+      isLoggedIn: false
+    };
+
+    this.getInitialView = this.getInitialView.bind(this);
+
+  }
+
+  getInitialView() {
+
+    firebase.auth().onAuthStateChanged((user) => {
+
+      let initialView = user ? "HomeScreen" : "LoginScreen";
+
+      this.setState({
+        userLoaded: true,
+        initialView: initialView
+      })
+    });
+
+
+  }
+
+  async logout() {
+
+        try {
+
+            await firebase.auth().signOut();
+
+            this.props.navigator.push('login')
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+
+   componentWillMount() {
     this._loadAssetsAsync();
   }
 
@@ -43,8 +97,12 @@ class AppContainer extends React.Component {
   }
 
   render() {
-    if (this.state.appIsReady) {
-      return (
+    if (this.state.initialView === 'LoginScreen')
+    return(
+    <LoginScreen/>
+    );
+    else {
+      return(
         <View style={styles.container}>
           <NavigationProvider router={Router}>
             <StackNavigation
@@ -58,12 +116,45 @@ class AppContainer extends React.Component {
             <View style={styles.statusBarUnderlay} />}
         </View>
       );
-    } else {
-      return <Expo.Components.AppLoading />;
     }
   }
-}
+  /*static renderScene(route, navigator) {
 
+    if (this.state.appIsReady) {
+
+    switch (this.state.initialView) {
+
+      case "HomeScreen":
+          return (
+          <View style={styles.container}>
+          <NavigationProvider router={Router}>
+            <StackNavigation
+              id="root"
+              initialRoute={Router.getRoute('rootNavigation')}
+            />
+          </NavigationProvider>
+
+          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          {Platform.OS === 'android' &&
+            <View style={styles.statusBarUnderlay} />}
+        </View>
+          );
+          break;
+
+      case "LoginScreen":
+        return (<LoginScreen/>);
+        break;
+
+    }
+
+    }
+    else {
+      return <Expo.Components.AppLoading /> ;
+    }
+
+  }*/
+
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
