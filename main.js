@@ -118,41 +118,6 @@ class AppContainer extends React.Component {
       );
     }
   }
-  /*static renderScene(route, navigator) {
-
-    if (this.state.appIsReady) {
-
-    switch (this.state.initialView) {
-
-      case "HomeScreen":
-          return (
-          <View style={styles.container}>
-          <NavigationProvider router={Router}>
-            <StackNavigation
-              id="root"
-              initialRoute={Router.getRoute('rootNavigation')}
-            />
-          </NavigationProvider>
-
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          {Platform.OS === 'android' &&
-            <View style={styles.statusBarUnderlay} />}
-        </View>
-          );
-          break;
-
-      case "LoginScreen":
-        return (<LoginScreen/>);
-        break;
-
-    }
-
-    }
-    else {
-      return <Expo.Components.AppLoading /> ;
-    }
-
-  }*/
 
 }
 const styles = StyleSheet.create({

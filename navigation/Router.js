@@ -5,6 +5,7 @@ import LinksScreen from '../screens/LinksScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import RootNavigation from './RootNavigation';
+import PromoCard from '../components/PromoCard';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -12,4 +13,6 @@ export default createRouter(() => ({
   settings: () => SettingsScreen,
   rootNavigation: () => RootNavigation,
   login:() => LoginScreen,
+  promo: () => PromoCard,
+  
 }));

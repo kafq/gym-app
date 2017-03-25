@@ -31,8 +31,8 @@ export default class HomeScreen extends React.Component {
        <Text style={styles.title}>Most Popular Programs</Text>
        <ProgramsList />
         <View style={styles.bgRectangular} />
-        <PromoCard />
-        <PromoCard />
+        <PromoCard onPress={this.goToSomewhere}/>
+        <PromoCard onPress={this.goToSomewhere}/>
       </ScrollView>
     );
   }

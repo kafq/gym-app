@@ -24,7 +24,7 @@ export default class RootNavigation extends React.Component {
 
   render() {
     return (
-      <TabNavigation tabBarHeight={56} initialTab="home">
+      <TabNavigation tabBarHeight={56} initialTab="home" navigatorUID="main">
         <TabNavigationItem
           id="home"
           renderIcon={isSelected => this._renderIcon('dashboard', isSelected)}>

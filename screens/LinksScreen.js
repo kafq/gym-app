@@ -43,7 +43,42 @@ export default class LinksScreen extends Component {
     this.logout = this.logout.bind(this);
     this.saveTodo = this.saveTodo.bind(this);
     
-    this.itemsRef = this.getRef().child('items');
+    this.itemsRef = this.getRef().child('exercises');
+  }
+  static route = {
+    navigationBar: {
+      visible: true,
+      title: 'Database data',
+    },
+  };
+
+
+componentWillMount() {
+
+   this.listenForItems(this.itemsRef);
+   this.getProfile();
+
+}
+
+ listenForItems(itemsRef) {
+    itemsRef.on('value', (snap) => {
+
+      // get children as an array
+      var exercises = [];
+      snap.forEach((child) => {
+        exercises.push({
+          name: child.val().name,
+          muscles: child.val().muscles,
+          type: child.val().type,
+          _key: child.key
+        });
+      });
+
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(exercises)
+      });
+
+    });
   }
 
     async logout() {
@@ -64,31 +99,7 @@ export default class LinksScreen extends Component {
     return firebase.database().ref();
   }
 
-  listenForItems(itemsRef) {
-    itemsRef.on('value', (snap) => {
-
-      // get children as an array
-      var items = [];
-      snap.forEach((child) => {
-        items.push({
-          title: child.val().title,
-          _key: child.key
-        });
-      });
-
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(items)
-      });
-
-    });
-  }
-
-componentWillMount() {
-
-   this.listenForItems(this.itemsRef);
-   this.getProfile();
-
-}
+ 
 
 
    // Get User Credentials
