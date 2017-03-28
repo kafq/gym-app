@@ -38,9 +38,6 @@ return exercises.filter((item) => {
 }
 
 export default class LinksScreen extends Component {
-  
-
-
 
   constructor(props) {
     super(props);
@@ -58,6 +55,7 @@ export default class LinksScreen extends Component {
     this.handleFilter = this.handleFilter.bind(this);
     this.logout = this.logout.bind(this);
     this.saveTodo = this.saveTodo.bind(this);
+    this.setSource = this.setSource.bind(this);
     this.itemsRef = this.getRef().child('exercises');
   }
   static route = {
@@ -66,21 +64,23 @@ export default class LinksScreen extends Component {
       title: 'Database data',
     },
   };
+
   handleFilter(filter) {
-    this.setSource(this.state.exercises, filterExercises(filter, this.state.items), { filter })
+    this.setSource(this.state.exercises, filterExercises(filter, this.state.exercises), { filter })
   }
-
-componentWillMount() {
-
-   this.listenForItems(this.itemsRef);
-   this.getProfile();
-
-  
-}
-
- listenForItems(itemsRef) {
+  componentWillMount() {
+    this.listenForItems(this.itemsRef);
+    this.getProfile(); 
+  }
+  setSource(exercises, itemsDatasource, otherState = {}){
+    this.setState({
+      exercises,
+      dataSource: this.state.dataSource.cloneWithRows(itemsDatasource),
+      ... otherState
+    })
+  }
+  listenForItems(itemsRef) {
     itemsRef.on('value', (snap) => {
-
       // get children as an array
       var exercises = [];
       snap.forEach((child) => {
@@ -89,19 +89,16 @@ componentWillMount() {
           muscles: child.val().muscles,
           type: child.val().type,
           photo: child.val().photo,
+          checked: child.val().checked,
           _key: child.key
         });
       });
-
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(exercises)
+        exercises
       });
-
     });
   }
-
-
-    async logout() {
+  async logout() {
 
         try {
 
@@ -114,45 +111,33 @@ componentWillMount() {
         }
 
     }
-
   getRef() {
     return firebase.database().ref();
   }
-
   getImagesRef() {
     return firebase.storage().ref();
   }
-
- 
-
-
-   // Get User Credentials
-async getProfile() {    
-  let user = firebase.auth().currentUser;
-
-            // Listen for Mobile Changes
+ // Get User Credentials
+  async getProfile() {    
+    let user = firebase.auth().currentUser;
+            // Listen for data change in optional field
             Database.listenUserTodo(user.uid, (todoNumber) => {
                 this.setState({
                     todo: todoNumber,
                     todoForm: todoNumber
                 });
             });
-
             this.setState({
                 uid: user.uid
             });
-
 }
-     saveTodo() {
-
-        // Set Mobile
+  saveTodo() {
+        // Set Optional Test Field
         if (this.state.uid && this.state.todoForm) {
             Database.setUserTodo(this.state.uid, this.state.todoForm);
         }
-
     }
-
-
+    
   render() {
    
     return (
