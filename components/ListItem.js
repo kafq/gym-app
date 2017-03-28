@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import ReactNative from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as firebase from 'firebase';
+import {withNavigation} from '@expo/ex-navigation';
+
 
 const { View, TouchableHighlight, Text, Image } = ReactNative;
 
+@withNavigation
 class ListItem extends Component {
   constructor(props) {
     super(props);
@@ -14,21 +17,24 @@ class ListItem extends Component {
   }
   componentWillMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.imageLink}.png`);
-   console.log('Images reference: ' + storageRef);
-storageRef.getDownloadURL().then((url) => {
+    console.log('Images reference: ' + storageRef);
+    storageRef.getDownloadURL().then((url) => {
       this.setState({
         uriLink: url
       })
-    console.log(url);
-}, function(error){
-    console.log(error);
-});
+      console.log(url);
+    }, function(error) {
+      console.log(error);
+    });
+  }
+  goToRoute = () => {
+    this.props.navigator.push('links')
   }
   render() {
     return (
       <TouchableHighlight 
         underlayColor={'#920707'}
-        onPress={this.props.onPress}>
+        onPress={this.goToRoute}>
         <View style={styles.exerciseContainer}>
           <View style={styles.imageContainer}>
             <Image source={{uri: this.state.uriLink}} style={{flex: 1, resizeMode: 'cover'}}></Image>

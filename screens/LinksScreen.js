@@ -17,7 +17,7 @@ import {
 
 import { MonoText } from '../components/StyledText';
 import { LoginScreen } from './LoginScreen';
-import Footer from '../components/Footer';
+import Filters from '../components/Filters';
 import CommonStyle from "../constants/common";
 import * as firebase from 'firebase';
 const StatusBar = require('../components/StatusBar');
@@ -61,17 +61,23 @@ export default class LinksScreen extends Component {
   static route = {
     navigationBar: {
       visible: true,
-      title: 'Database data',
+      title: 'Library',
     },
   };
-
-  handleFilter(filter) {
-    this.setSource(this.state.exercises, filterExercises(filter, this.state.exercises), { filter })
-  }
+/**
+ * Component Life Cycles
+ */
   componentWillMount() {
     this.listenForItems(this.itemsRef);
     this.getProfile(); 
   }
+/**
+ * Public functions 
+ */
+  handleFilter(filter) {
+    this.setSource(this.state.exercises, filterExercises(filter, this.state.exercises), { filter })
+  }
+  
   setSource(exercises, itemsDatasource, otherState = {}){
     this.setState({
       exercises,
@@ -94,7 +100,8 @@ export default class LinksScreen extends Component {
         });
       });
       this.setState({
-        exercises
+        exercises,
+        dataSource: this.state.dataSource.cloneWithRows(exercises)
       });
     });
   }
@@ -117,7 +124,7 @@ export default class LinksScreen extends Component {
   getImagesRef() {
     return firebase.storage().ref();
   }
- // Get User Credentials
+
   async getProfile() {    
     let user = firebase.auth().currentUser;
             // Listen for data change in optional field
@@ -137,20 +144,18 @@ export default class LinksScreen extends Component {
             Database.setUserTodo(this.state.uid, this.state.todoForm);
         }
     }
-    
+
   render() {
    
     return (
-      <View style={styles.container}>
-
-        <View style={{flex: 1}}>
-
-                    <View style={{flex: 1,flexDirection: 'column', margin: 0, padding: 0, backgroundColor: '#F00'}}>
-                      {/*<Image source={require('../assets/images/hero2.png')}
-                      style={{flex: 1, alignSelf: 'stretch',
-    width: null}}></Image>*/}
-                    </View>
-        </View>
+      <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.heading1}>Search Exercises</Text>
+        <Filters
+          onFilter={this.handleFilter}
+          filter={this.state.filter}/>
+      </View>
+            
         <View style={styles.form}>
                         <TextInput
                           style = {{height: 20, width: 300}}
@@ -165,16 +170,16 @@ export default class LinksScreen extends Component {
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.listview}/>
-         <Footer
-          onFilter={this.handleFilter}
-          filter={this.state.filter}/>
+         
         <ActionButton onPress={this._addItem.bind(this)} title="Add" />
         <ActionButton onPress={this.logout} title="Logout" />
     
-      </View>
+      </ScrollView>
     )
   }
-
+/**
+ * Private Functions
+ */
   _addItem() {
     AlertIOS.prompt(
       'Add New Item',

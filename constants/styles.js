@@ -6,46 +6,21 @@ const constants = {
 
 var styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fff',
     flex: 1,
   },
-  listview: {
-    flex: 1,
+  header: {
+    height: 120,
+    paddingHorizontal: 30,
+    flexDirection: 'column',
+    borderBottomColor: '#EBEBEB',
+    borderBottomWidth: 1,
+    justifyContent: 'space-around'
   },
-  li: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
-    borderColor: 'transparent',
-    borderWidth: 1,
-    paddingLeft: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
-  },
-  liContainer: {
-    flex: 2,
-  },
-  liText: {
-    color: '#333',
-    fontSize: 16,
-  },
-  navbar: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
-    borderColor: 'transparent',
-    borderWidth: 1,
-    justifyContent: 'center',
-    height: 44,
-    flexDirection: 'row'
-  },
-  navbarTitle: {
-    color: '#444',
-    fontSize: 16,
-    fontWeight: "500"
-  },
-  statusbar: {
-    backgroundColor: '#fff',
-    height: 22,
+  heading1: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginLeft: 20
   },
   center: {
     textAlign: 'center',
