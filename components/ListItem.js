@@ -1,17 +1,38 @@
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
 import {StyleSheet} from 'react-native';
+import * as firebase from 'firebase';
 
-const { View, TouchableHighlight, Text } = ReactNative;
+const { View, TouchableHighlight, Text, Image } = ReactNative;
 
 class ListItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      uriLink: ""
+    }
+  }
+  componentWillMount() {
+    var storageRef = firebase.storage().ref(`exercises/${this.props.imageLink}.png`);
+   console.log('Images reference: ' + storageRef);
+storageRef.getDownloadURL().then((url) => {
+      this.setState({
+        uriLink: url
+      })
+    console.log(url);
+}, function(error){
+    console.log(error);
+});
+  }
   render() {
     return (
       <TouchableHighlight 
         underlayColor={'#920707'}
         onPress={this.props.onPress}>
         <View style={styles.exerciseContainer}>
-          <View style={styles.imageContainer}></View>
+          <View style={styles.imageContainer}>
+            <Image source={{uri: this.state.uriLink}} style={{flex: 1, resizeMode: 'cover'}}></Image>
+          </View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>{this.props.item.name}</Text>
             <Text>{this.props.item.muscles}</Text>
