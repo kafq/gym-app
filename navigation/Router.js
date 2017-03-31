@@ -1,11 +1,12 @@
 import { createRouter } from '@expo/ex-navigation';
 
+import RootNavigation from './RootNavigation';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ExerciseScreen from '../screens/ExerciseScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import RootNavigation from './RootNavigation';
-import PromoCard from '../components/PromoCard';
+
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -13,6 +14,6 @@ export default createRouter(() => ({
   settings: () => SettingsScreen,
   rootNavigation: () => RootNavigation,
   login:() => LoginScreen,
-  promo: () => PromoCard,
-  
+  exercise: () => ExerciseScreen,
+
 }));

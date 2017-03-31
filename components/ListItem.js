@@ -28,7 +28,10 @@ class ListItem extends Component {
     });
   }
   goToRoute = () => {
-    this.props.navigator.push('links')
+    this.props.navigator.push('exercise', {
+      exerciseName: this.props.item.name,
+      exerciseType: this.props.item.type
+    })
   }
   render() {
     return (
