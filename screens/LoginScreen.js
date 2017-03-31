@@ -87,7 +87,7 @@ export default class LoginScreen extends Component {
             '1767868336864920',
             { permissions: ['public_profile', 'email'] }
         );
-    
+
     if (type === 'success') {
         // Build Firebase credential with the Facebook access token.
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
