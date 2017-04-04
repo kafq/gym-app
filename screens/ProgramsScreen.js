@@ -38,7 +38,9 @@ export default class SettingsScreen extends React.Component {
       snap.forEach((child) => {
         programs.push({
           days: child.val().days,
-          legs: child.val().legs,
+          day1muscles: child.val().day1muscles,
+          day2muscles: child.val().day2muscles,
+          day3muscles: child.val().day3muscles,
           arms: child.val().arms,
           _key: child.key
         });

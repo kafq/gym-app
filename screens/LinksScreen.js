@@ -33,7 +33,7 @@ const filterExercises = (filter, exercises) => {
 return exercises.filter((item) => {
   if (filter === 'ALL') return true;
   if (filter === 'ISOLATION') return item.type === 'isolating';
-  if (filter === 'MUSCLES') return item.checked;
+  if (filter === 'ARMS') return item.arms;
 })
 }
 
