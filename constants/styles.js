@@ -42,6 +42,11 @@ var styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     paddingHorizontal: 10
+  },
+  divider: {
+    height: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB'
   }
 })
 

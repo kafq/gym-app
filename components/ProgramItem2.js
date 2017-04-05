@@ -51,6 +51,7 @@ class ProgramItem2 extends Component {
   goToRoute = () => {
     this.props.navigator.push('programDashboard', {
       programName: this.props.item._key,
+      exercises: this.props.exercises
     })
   }
   showExercises = () => {

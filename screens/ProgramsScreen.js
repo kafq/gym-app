@@ -14,7 +14,8 @@ export default class SettingsScreen extends React.Component {
       programsDataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
-      exercises: []
+      exercises: [],
+      programs: []
     };
     this.programsRef = this.getRef().child('programs');
     this.exercisesRef = this.getRef().child('exercises');
@@ -42,7 +43,6 @@ export default class SettingsScreen extends React.Component {
       var exercises = [];
       
       snap.forEach((child) => {
-        //if (this.props.item.day1muscles.arms && child.val().arms) {
         exercises.push({
           name: child.val().name,
           muscles: child.val().muscles,
