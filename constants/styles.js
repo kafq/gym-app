@@ -38,6 +38,11 @@ var styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 16,
   },
+  programsContainer: {
+    flex: 1,
+    paddingVertical: 20,
+    paddingHorizontal: 10
+  }
 })
 
 module.exports = styles

@@ -4,6 +4,7 @@ import {StyleSheet} from 'react-native';
 import * as firebase from 'firebase';
 import {withNavigation} from '@expo/ex-navigation';
 import ListItem from '../components/ListItem';
+import Layout from '../constants/Layout';
 
 const { View, TouchableHighlight, Text, Image, ListView, TouchableOpacity } = ReactNative;
 
@@ -32,11 +33,7 @@ class ProgramItem2 extends Component {
       exercises: []
     }
     this.handleFilter = this.handleFilter.bind(this);
-    this.itemsRef = this.getRef().child('exercises');
-  }
-  
-  componentWillMount() {
-        this.listenForItems(this.itemsRef);
+ 
   }
   
   handleFilter(filter) {
@@ -50,38 +47,10 @@ class ProgramItem2 extends Component {
       ... otherState
     })
   }
-
-  getRef() {
-    return firebase.database().ref();
-  }
-  listenForItems(itemsRef) {
-    itemsRef.on('value', (snap) => {
-      // get children as an array
-      var exercises = [];
-      
-      snap.forEach((child) => {
-        //if (this.props.item.day1muscles.arms && child.val().arms) {
-        exercises.push({
-          name: child.val().name,
-          muscles: child.val().muscles,
-          type: child.val().type,
-          photo: child.val().photo,
-          checked: child.val().checked,
-          _key: child.key
-        });
-      });
-      this.setState({
-        exercises,
-        dataSource: this.state.dataSource.cloneWithRows(exercises)
-      });
-    });
-    
-  }
   
   goToRoute = () => {
-    this.props.navigator.push('exercise', {
-      exerciseName: this.props.item.name,
-      exerciseType: this.props.item.type
+    this.props.navigator.push('programDashboard', {
+      programName: this.props.item._key,
     })
   }
   showExercises = () => {
@@ -96,25 +65,42 @@ class ProgramItem2 extends Component {
       )
   }
   render() {
+    const { exercises } = this.props;
     return (
       
       <TouchableHighlight 
         underlayColor={'#920707'}
-        onPress={this.goToRoute}>
-        <View style={styles.exerciseContainer}>
+        onPress={this.goToRoute}
+        style={styles.container}>
+        <Image 
+          source={require('../assets/images/program_background.png')}
+          resizeMode={Image.resizeMode.cover}
+          style={{flex: 1, width: null, height: null, borderRadius: 6}}
+        >
           <View style={styles.textContainer}>
-            <Text style={styles.title}>Program key: {this.props.item._key}</Text>
-            <Text>Amount of days: {this.props.item.days}</Text>
-            {this.showExercises()}
-            <Text>{ this.props.item.legs}</Text>
-            <Text>Day 1 exercises: </Text>
-             <ListView
-              dataSource={this.state.dataSource}
-              renderRow={this._renderItem.bind(this)}
-              enableEmptySections={true}
-              style={styles.listview}/>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Program key: {this.props.item._key}</Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <View style={styles.tagContainer}>
+                <Text style={styles.tag}>days overall</Text>
+                <Text style={styles.text}>30 days</Text>
+              </View>
+              <View style={styles.tagContainer}>
+                <Text style={styles.tag}>per week</Text>
+                <Text style={styles.text}>{this.props.item.days}</Text>
+              </View>
+              <View style={styles.tagContainer}>
+                <Text style={styles.tag}>gender</Text>
+                <Text style={styles.text}>Both</Text>
+              </View> 
+              <View style={styles.tagContainer}>
+                <Text style={styles.tag}>level</Text>
+                <Text style={styles.text}>Beginner</Text>
+              </View>
+            </View>
           </View>
-        </View>
+        </Image>
       </TouchableHighlight>
     );
   }
@@ -138,31 +124,51 @@ class ProgramItem2 extends Component {
   }
 }
 const styles = StyleSheet.create({
-  exerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  imageContainer: {
-    width: 107,
-    height: 73,
-    backgroundColor: '#CFCFCF',
-    margin: 12,
-    shadowRadius: 4,
+  container: {
+    flex: 1,
+    width: Layout.window.width * 0.8,
+    marginHorizontal: 20,
+    borderRadius: 6,
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 3
     },
     shadowOpacity: 0.5,
-    borderRadius: 6
+    shadowRadius: 5
+  },
+  textContainer: {
+    alignItems: 'flex-start',
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    justifyContent: 'space-between',
+    flexDirection: 'column'
+  },
+  titleContainer: {
+    flex: 2,
+    justifyContent: 'flex-start'
+  },
+  infoContainer: {
+    flex: 3,
+    justifyContent: 'flex-end'
   },
   title: {
     fontSize: 18,
     marginBottom: 5,
-    fontWeight: '500'
+    fontWeight: '500',
+    color: '#fff',
+    fontSize: 24
+  },
+  text: {
+    color: '#fff'
   },
   tag: {
-    fontSize: 14,
-    marginVertical: 1
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontWeight: '600',
+  },
+  tagContainer: {
+    marginBottom: 5
   }
 })
 module.exports = ProgramItem2;

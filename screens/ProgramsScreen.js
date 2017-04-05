@@ -8,12 +8,16 @@ export default class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: new ListView.DataSource({
+      exercisesDataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      programsDataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       exercises: []
     };
     this.programsRef = this.getRef().child('programs');
+    this.exercisesRef = this.getRef().child('exercises');
   }
 
   static route = {
@@ -26,11 +30,36 @@ export default class SettingsScreen extends React.Component {
  */
   componentWillMount() {
     this.listenForPrograms(this.programsRef);
+    this.listenForExercises(this.exercisesRef);
   }
   
   getRef() {
     return firebase.database().ref();
   }
+  listenForExercises(exercisesRef) {
+    exercisesRef.on('value', (snap) => {
+      // get children as an array
+      var exercises = [];
+      
+      snap.forEach((child) => {
+        //if (this.props.item.day1muscles.arms && child.val().arms) {
+        exercises.push({
+          name: child.val().name,
+          muscles: child.val().muscles,
+          type: child.val().type,
+          photo: child.val().photo,
+          checked: child.val().checked,
+          _key: child.key
+        });
+      });
+      this.setState({
+        exercises,
+        exercisesDataSource: this.state.exercisesDataSource.cloneWithRows(exercises)
+      });
+    });
+    
+  }
+
   listenForPrograms(programsRef) {
     programsRef.on('value', (snap) => {
       // get children as an array
@@ -48,7 +77,7 @@ export default class SettingsScreen extends React.Component {
       console.log(programs);
       this.setState({
         programs,
-        dataSource: this.state.dataSource.cloneWithRows(programs)
+        programsDataSource: this.state.programsDataSource.cloneWithRows(programs)
       });
     });
   }
@@ -60,10 +89,13 @@ export default class SettingsScreen extends React.Component {
         contentContainerStyle={this.props.route.getContentContainerStyle()}>
 <View><Text>Welcome to programs</Text></View>
         <ListView
-          dataSource={this.state.dataSource}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          dataSource={this.state.programsDataSource}
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
-          style={styles.listview}/>
+          style={styles.programsContainer}/>
       </View>
     );
   }
@@ -72,7 +104,7 @@ export default class SettingsScreen extends React.Component {
 
 
     return (
-      <ProgramItem2 item={item}/>
+      <ProgramItem2 item={item} exercises={this.state.exercises}/>
     );
   }
 }

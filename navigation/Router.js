@@ -7,6 +7,7 @@ import LoginScreen from '../screens/LoginScreen';
 import ExerciseScreen from '../screens/ExerciseScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ProgramsScreen from '../screens/ProgramsScreen';
+import ProgramDashboardScreen from '../screens/ProgramDashboardScreen';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -16,4 +17,5 @@ export default createRouter(() => ({
   login:() => LoginScreen,
   exercise: () => ExerciseScreen,
   programs: () => ProgramsScreen,
+  programDashboard: () => ProgramDashboardScreen
 }));
