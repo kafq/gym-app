@@ -27,8 +27,7 @@ export default function PromoCard({onPress}) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: -350,
-    marginBottom: 400,
+    marginBottom: 40,
     width: 350,
     alignSelf: 'center',
     backgroundColor: 'transparent',

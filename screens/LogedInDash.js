@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
-import CTACard from '../components/CTACard';
+import HeroCard from '../components/HeroCard';
 import ProgramsList from '../components/ProgramsList';
 import Colors from '../constants/Colors';
-import PromoCard from '../components/PromoCard'
+import PromoCard from '../components/PromoCard';
+import ExThumbnail from '../components/ExThumbnail';
+import Stats from '../components/Stats';
+
 
 export default class HomeScreen extends React.Component {
   static route = {
@@ -26,13 +29,12 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-     <ScrollView>
-       <CTACard />
-       <Text style={styles.title}>Most Popular Programs</Text>
-       <ProgramsList />
-        <View style={styles.bgRectangular} />
-        <PromoCard onPress={this.goToSomewhere}/>
-        <PromoCard onPress={this.goToSomewhere}/>
+     <ScrollView style={styles.container}>
+       <HeroCard />
+       <ExThumbnail />
+       <Text style={styles.title}>Your Progress</Text>
+       <Stats />
+       <PromoCard style={styles.PromoCard} onPress={this.goToSomewhere}/>
       </ScrollView>
     );
   }
@@ -50,9 +52,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     marginVertical: 15,
     marginLeft: 15,
+    marginTop: -20,
+    backgroundColor: 'transparent',
   },
    bgRectangular: {
-    marginBottom: -300,
     height: 300,
     width: 700,
     alignSelf: 'stretch',
@@ -64,5 +67,8 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     marginHorizontal: -100
   },
+  PromoCard: {
+    marginTop: 350,
+  }
   
 });

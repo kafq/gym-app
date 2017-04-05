@@ -69,7 +69,7 @@ export default class LinksScreen extends Component {
  */
   componentWillMount() {
     this.listenForItems(this.itemsRef);
-    this.getProfile(); 
+    this.getProfile();
   }
 /**
  * Public functions 

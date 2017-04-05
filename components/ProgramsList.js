@@ -18,7 +18,7 @@ class ProgramsList extends Component {
     }
 }
 
-  componentWillMount() {
+  componentDidMount() {
     fetch('https://api.myjson.com/bins/iegsf')
       .then((response) => response.json())
       .then((responseData) => {
