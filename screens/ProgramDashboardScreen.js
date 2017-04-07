@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ListView } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, ListView } from 'react-native';
 import Divider from '../components/Divider';
 import ListItem from '../components/ListItem';
 
@@ -15,51 +15,62 @@ export default class ExerciseScreen extends React.Component {
   static route = {
     navigationBar: {
       title(params){
-        return `Do ${params.programName}`
+        return `Do ${params.program._key}`
       }
     },
   };
   componentWillMount() {
       this.setState({
-          datasource: this.props.route.params.exercises
-      })
-      console.log(this.props.route.params.exercises)
+          dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
+      });
+      this._retrieveFilteredItems();
   }
 
   render() {
+
+    const { uid } = this.state;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.imageContainer}>
             <Image 
                 source={require('../assets/images/program_background.png')}
                 resizeMode={Image.resizeMode.fill}
                 style={{flex: 1, width: null, height: null}}
             >
-                <Text style={styles.textWhiteTitle}>{this.props.route.params.programName}</Text>
+                <Text style={styles.textWhiteTitle}>{this.props.route.params.program._key}</Text>
             </Image>
         </View>
-        <Text>Program Program Program</Text>
-        <Text>You have passed: {this.props.route.params.exerciseType}</Text>
+        <Text>You have passed: {this.state.uid}</Text>
         <Text style={styles.textBlackTitle}>Workouts</Text>
         <Divider/>
         <Text>First day exercises</Text>
+        <Text>{this.props.route.params.program.days}</Text>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.programsContainer}/>
            <Divider/>
-      </View>
+      </ScrollView>
     );
   }
+_retrieveFilteredItems(filter, exercises) {
+const ref = this.props.route.params.program.day1;
+
+const filteredExercises = this.props.route.params.exercises.filter((item) => {
+
+    return ref.split(', ').includes(item.muscles);
+})
+this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(filteredExercises)
+})
+}
 
 _renderItem(item) {
 
 
     return (
-      <View>
-          <Text>1 + item.name</Text>
-          </View>
+      <ListItem item={item} imageLink={item.photo}/>
     );
   }
 }

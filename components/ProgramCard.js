@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 import {withNavigation} from '@expo/ex-navigation';
 import ListItem from '../components/ListItem';
 import Layout from '../constants/Layout';
+import Tag from '../components/Tag';
 
 const { View, TouchableHighlight, Text, Image, ListView, TouchableOpacity } = ReactNative;
 
@@ -21,7 +22,7 @@ return exercises.filter((item) => {
 }
 
 @withNavigation
-class ProgramItem2 extends Component {
+class ProgramCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,21 +51,12 @@ class ProgramItem2 extends Component {
   
   goToRoute = () => {
     this.props.navigator.push('programDashboard', {
-      programName: this.props.item._key,
-      exercises: this.props.exercises
+      program: this.props.item,
+      exercises: this.props.exercises,
+      uid: this.state.uid
     })
   }
-  showExercises = () => {
-      return(
-          <Text>Privet</Text>
-          /**
-           * 1) take all 'true' muscles
-           * 2) take all exercises
-           * 3) filter all exercises, which have 'true' muscles
-           * 4) render exercises with 'true' muscles within ListItem
-           */
-      )
-  }
+
   render() {
     const { exercises } = this.props;
     return (
@@ -83,29 +75,28 @@ class ProgramItem2 extends Component {
               <Text style={styles.title}>Program key: {this.props.item._key}</Text>
             </View>
             <View style={styles.infoContainer}>
-              <View style={styles.tagContainer}>
-                <Text style={styles.tag}>days overall</Text>
-                <Text style={styles.text}>30 days</Text>
-              </View>
-              <View style={styles.tagContainer}>
-                <Text style={styles.tag}>per week</Text>
-                <Text style={styles.text}>{this.props.item.days}</Text>
-              </View>
-              <View style={styles.tagContainer}>
-                <Text style={styles.tag}>gender</Text>
-                <Text style={styles.text}>Both</Text>
-              </View> 
-              <View style={styles.tagContainer}>
-                <Text style={styles.tag}>level</Text>
-                <Text style={styles.text}>Beginner</Text>
-              </View>
+              <Tag title={'days overall'} content={'30 days'}/>
+              <Tag title={'per week'} content={this.props.item.days}/>
+              <Tag title={'muscles'} content={this._getMuscles()}/>
+              <Tag title={'gender'} content={'Both'}/>
+              <Tag title={'level'} content={'Beginner'}/>
             </View>
           </View>
         </Image>
       </TouchableHighlight>
     );
   }
+_getMuscles() {
+  const muscles = (this.props.item.day1 || '') + ', '+ 
+                  (this.props.item.day2 || '') + ', ' + 
+                  (this.props.item.day3 || '');
 
+  const filteredMuscles = muscles.split(', ').filter((elem, index, self) => {
+    return (index == self.indexOf(elem) && elem !== '');
+  })
+  return filteredMuscles.join(', ');
+
+}
     _renderItem(item) {
 
     const onPress = () => {
@@ -163,13 +154,5 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff'
   },
-  tag: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.5)',
-    fontWeight: '600',
-  },
-  tagContainer: {
-    marginBottom: 5
-  }
 })
-module.exports = ProgramItem2;
+module.exports = ProgramCard;

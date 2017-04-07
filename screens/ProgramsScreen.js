@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, ListView, TouchableOpacity } from 'react-native';
 import * as firebase from 'firebase';
-const ProgramItem2 = require('../components/ProgramItem2');
+import ProgramCard from '../components/ProgramCard';
 const styles = require('../constants/styles.js');
 
 export default class SettingsScreen extends React.Component {
@@ -15,7 +15,8 @@ export default class SettingsScreen extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       exercises: [],
-      programs: []
+      programs: [],
+      uid: 'Wait for it'
     };
     this.programsRef = this.getRef().child('programs');
     this.exercisesRef = this.getRef().child('exercises');
@@ -33,7 +34,12 @@ export default class SettingsScreen extends React.Component {
     this.listenForPrograms(this.programsRef);
     this.listenForExercises(this.exercisesRef);
   }
-  
+  componentDidMount() {
+    let user = firebase.auth().currentUser;
+    this.setState({
+      uid: user.uid
+    })
+  }
   getRef() {
     return firebase.database().ref();
   }
@@ -48,8 +54,7 @@ export default class SettingsScreen extends React.Component {
           muscles: child.val().muscles,
           type: child.val().type,
           photo: child.val().photo,
-          checked: child.val().checked,
-          _key: child.key
+          _key: child.key,
         });
       });
       this.setState({
@@ -67,10 +72,9 @@ export default class SettingsScreen extends React.Component {
       snap.forEach((child) => {
         programs.push({
           days: child.val().days,
-          day1muscles: child.val().day1muscles,
-          day2muscles: child.val().day2muscles,
-          day3muscles: child.val().day3muscles,
-          arms: child.val().arms,
+          day1: child.val().day1,
+          day2: child.val().day2,
+          day3: child.val().day3,
           _key: child.key
         });
       });
@@ -87,7 +91,7 @@ export default class SettingsScreen extends React.Component {
       <View
         style={styles.container}
         contentContainerStyle={this.props.route.getContentContainerStyle()}>
-<View><Text>Welcome to programs</Text></View>
+<View><Text>Welcome to programs, {this.state.uid}</Text></View>
         <ListView
           horizontal
           pagingEnabled
@@ -104,7 +108,7 @@ export default class SettingsScreen extends React.Component {
 
 
     return (
-      <ProgramItem2 item={item} exercises={this.state.exercises}/>
+      <ProgramCard item={item} userid={this.state.uid} exercises={this.state.exercises}/>
     );
   }
 }

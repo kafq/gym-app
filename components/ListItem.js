@@ -12,17 +12,15 @@ class ListItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      uriLink: ""
+      uriLink: 'not empty string',
     }
   }
   componentWillMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.imageLink}.png`);
-    console.log('Images reference: ' + storageRef);
     storageRef.getDownloadURL().then((url) => {
       this.setState({
         uriLink: url
       })
-      console.log(url);
     }, function(error) {
       console.log(error);
     });
@@ -40,7 +38,7 @@ class ListItem extends Component {
         onPress={this.goToRoute}>
         <View style={styles.exerciseContainer}>
           <View style={styles.imageContainer}>
-            <Image source={{uri: this.state.uriLink}} style={{flex: 1, resizeMode: 'cover'}}></Image>
+            <Image source={{uri: this.state.uriLink || require('../assets/images/CTA.png')}} style={{flex: 1, resizeMode: 'cover'}}></Image>
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>{this.props.item.name}</Text>
