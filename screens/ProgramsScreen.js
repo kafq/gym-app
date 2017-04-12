@@ -75,10 +75,11 @@ export default class SettingsScreen extends React.Component {
           day1: child.val().day1,
           day2: child.val().day2,
           day3: child.val().day3,
-          _key: child.key
+          _key: child.key,
+          gender: child.val().gender,
+          level: child.val().level,
         });
       });
-      console.log(programs);
       this.setState({
         programs,
         programsDataSource: this.state.programsDataSource.cloneWithRows(programs)
@@ -86,12 +87,14 @@ export default class SettingsScreen extends React.Component {
     });
   }
 
+
   render() {
     return (
       <View
         style={styles.container}
         contentContainerStyle={this.props.route.getContentContainerStyle()}>
-<View><Text>Welcome to programs, {this.state.uid}</Text></View>
+<View><Text>Welcome to programs, </Text></View>
+
         <ListView
           horizontal
           pagingEnabled
@@ -108,7 +111,7 @@ export default class SettingsScreen extends React.Component {
 
 
     return (
-      <ProgramCard item={item} userid={this.state.uid} exercises={this.state.exercises}/>
+      <ProgramCard item={item} uid={this.state.uid} exercises={this.state.exercises}/>
     );
   }
 }

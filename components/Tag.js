@@ -1,28 +1,14 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 
-class Tag extends Component {
+export default class Tag extends Component {
   render() {
     return (
-      <View style={styles.tagContainer}>
-        <Text style={styles.tag}>{this.props.title}</Text>
-        <Text style={styles.text}>{this.props.content}</Text>
+      <View style={{marginBottom: 5}}>
+        <Text style={{color: this.props.color, opacity: 0.7, fontSize: 12, fontWeight: 'bold'}}>{this.props.title}</Text>
+        <Text style={{color: this.props.color}}>{this.props.content}</Text>
       </View>
     );
   }
   
 }
-const styles = StyleSheet.create({
-    tag: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.5)',
-    fontWeight: '600',
-  },
-  tagContainer: {
-    marginBottom: 5
-  },
-  text: {
-    color: '#fff'
-  },
-})
-export default Tag;

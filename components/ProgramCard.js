@@ -53,12 +53,13 @@ class ProgramCard extends Component {
     this.props.navigator.push('programDashboard', {
       program: this.props.item,
       exercises: this.props.exercises,
-      uid: this.state.uid
+      uid: this.props.uid
     })
   }
 
   render() {
     const { exercises } = this.props;
+    const { uid } = this.props;
     return (
       
       <TouchableHighlight 
@@ -75,11 +76,11 @@ class ProgramCard extends Component {
               <Text style={styles.title}>Program key: {this.props.item._key}</Text>
             </View>
             <View style={styles.infoContainer}>
-              <Tag title={'days overall'} content={'30 days'}/>
-              <Tag title={'per week'} content={this.props.item.days}/>
-              <Tag title={'muscles'} content={this._getMuscles()}/>
-              <Tag title={'gender'} content={'Both'}/>
-              <Tag title={'level'} content={'Beginner'}/>
+              <Tag title={'days overall'} content={'30 days'} color='#fff'/>
+              <Tag title={'per week'} content={this.props.item.days} color='#fff'/>
+              <Tag title={'muscles'} content={this._getMuscles()} color='#fff'/>
+              <Tag title={'gender'} content={'Both'} color='#fff'/>
+              <Tag title={'level'} content={'Beginner'} color='#fff'/>
             </View>
           </View>
         </Image>
@@ -97,23 +98,7 @@ _getMuscles() {
   return filteredMuscles.join(', ');
 
 }
-    _renderItem(item) {
 
-    const onPress = () => {
-      AlertIOS.alert(
-        'Complete',
-        null,
-        [
-          {text: 'Complete', onPress: (text) => this.itemsRef.child(item._key).remove()},
-          {text: 'Cancel', onPress: (text) => console.log('Cancelled')}
-        ]
-      );
-    };
-
-    return (
-      <ListItem item={item} imageLink={item.photo} onPress={onPress} />
-    );
-  }
 }
 const styles = StyleSheet.create({
   container: {

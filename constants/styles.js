@@ -47,6 +47,9 @@ var styles = StyleSheet.create({
     height: 1,
     borderBottomWidth: 1,
     borderBottomColor: '#EBEBEB'
+  },
+  bestFit: {
+    backgroundColor: '#920707'
   }
 })
 

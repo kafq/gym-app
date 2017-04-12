@@ -27,6 +27,54 @@ class Database {
             callback(todo)
         });
     }
+    static getUserMeta(uid, callback) {
+  
+        let path = "/user/" + uid + "/details";
+        
+        firebase.database().ref(path).on('value', (snap) => {
+        
+            let programName = "";
+            if (snap.val()) {
+                programName = snap.val().programName
+            }
+            callback(programName);
+    })
+    
+    }
+    static enrollIntoProgram(uid, passedProgram) {
+            
+            let path = "/user/" + uid + "/details";
+           
+            firebase.database().ref(path).set({
+                programName: passedProgram
+            })
+    }
+    static leaveProgram(uid) {
+            let path = "/user/" + uid + "/details";
+
+            firebase.database().ref(path).set({
+                programName: ''
+            })
+    }
+    static addExerciseStats(exerciseId, weight, metric) {
+        let uid = firebase.auth().currentUser.uid;
+
+        let path = "/user/" + uid + "/statistics";
+
+        firebase.database().ref(path).push({
+            exerciseId,
+            weight,
+            metric,
+            date: Date.now()
+        });
+
+        firebase.database().ref(path).transaction( (statistics) => {
+            if (statistics) {
+                statistics.exercisesDone = statistics.exercisesDone + 1;
+            }
+            return statistics;
+        });
+    }
 
 }
 
