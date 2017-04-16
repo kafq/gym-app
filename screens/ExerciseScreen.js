@@ -20,7 +20,8 @@ export default class ExerciseScreen extends React.Component {
       }
     },
   };
-  
+
+
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }

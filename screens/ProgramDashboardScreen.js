@@ -22,18 +22,19 @@ export default class ExerciseScreen extends React.Component {
     },
   };
   componentWillMount() {
-      this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
-      });
-      this._retrieveFilteredItems();
+     
   }
   componentDidMount() {
       let uid = this.props.route.params.uid;
-      Database.getUserMeta(uid, (programName) => {
+      Database.getUserProgram(uid, (programName) => {
           this.setState({
               programName
           })
       })
+       this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
+      });
+      this._retrieveFilteredItems();
   }
 
   render() {
@@ -67,10 +68,17 @@ export default class ExerciseScreen extends React.Component {
       </ScrollView>
     );
   }
+
 _displayEnrollButton() {
     enrollProgram = () => {
-        Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program._key)
+        Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program)
     }
+    goToRoute = () => {
+    this.props.navigator.push('editProgramDash', {
+      program: this.props.route.params.program,
+      uid: this.props.route.params.uid
+    })
+  }
     switch (this.state.programName) {
         case '':
             return(
@@ -82,7 +90,9 @@ _displayEnrollButton() {
             return(
                 <View>
                     <Text>THIS YOUR PROGRAM</Text>
+                    <TouchableOpacity onPress={goToRoute}><Text>EDIT THE PROGRAM</Text></TouchableOpacity>
                 </View>
+
             );
         default: 
             return(

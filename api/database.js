@@ -27,9 +27,9 @@ class Database {
             callback(todo)
         });
     }
-    static getUserMeta(uid, callback) {
+    static getUserProgram(uid, callback) {
   
-        let path = "/user/" + uid + "/details";
+        let path = "/user/" + uid + "/ownProgram";
         
         firebase.database().ref(path).on('value', (snap) => {
         
@@ -43,14 +43,24 @@ class Database {
     }
     static enrollIntoProgram(uid, passedProgram) {
             
-            let path = "/user/" + uid + "/details";
+            let path = "/user/" + uid + "/ownProgram";
            
-            firebase.database().ref(path).set({
-                programName: passedProgram
+            firebase.database().ref(path).update({
+                programName: passedProgram._key,
+                gender: passedProgram.gender,
+                days: passedProgram.days,
+                day1: passedProgram.day1 || '',
+                day2: passedProgram.day2 || '',
+                day3: passedProgram.day3 || '',
+                day4: passedProgram.day4 || '',
+                day5: passedProgram.day5 || '',
+                day6: passedProgram.day6 || '',
+                hasProgram: true,
+
             })
     }
     static leaveProgram(uid) {
-            let path = "/user/" + uid + "/details";
+            let path = "/user/" + uid + "/ownProgram";
 
             firebase.database().ref(path).set({
                 programName: ''
@@ -74,6 +84,23 @@ class Database {
             }
             return statistics;
         });
+    }
+    static updateProgram(newMuscles) {
+        let uid = firebase.auth().currentUser.uid;
+        let path = "/user/" + uid + "/ownProgram";
+        firebase.database().ref(path).update({
+            day1: newMuscles
+        });
+    }
+    static addUserDetails(level, DaysPerWeek) {
+         let uid = firebase.auth().currentUser.uid;
+
+         let path = "/user/" + uid + "/details";
+
+         firebase.database().ref(path).update({
+            level,
+            DaysPerWeek,
+        });         
     }
 
 }

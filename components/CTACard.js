@@ -27,7 +27,7 @@ class CTACard extends Component {
     );
   }
   goToSomewhere = () => {
-    this.props.navigator.push('programs');
+    this.props.navigator.push('questions');
   }
 }
 

@@ -8,7 +8,10 @@ import ExerciseScreen from '../screens/ExerciseScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ProgramsScreen from '../screens/ProgramsScreen';
 import ProgramDashboardScreen from '../screens/ProgramDashboardScreen';
-import LogedInDash from '../screens/LogedInDash'
+import LogedInDash from '../screens/LogedInDash';
+import EditProgramScreen from '../screens/EditProgramScreen';
+import EditProgramDashboard from '../screens/EditProgramDashboard';
+import QuestionsScreen from '../screens/QuestionsScreen';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -19,6 +22,8 @@ export default createRouter(() => ({
   exercise: () => ExerciseScreen,
   programs: () => ProgramsScreen,
   programDashboard: () => ProgramDashboardScreen,
-  logedInDash: () => LogedInDash
-
+  logedInDash: () => LogedInDash,
+  editProgramDash: () => EditProgramDashboard,
+  editProgram: () => EditProgramScreen,
+  questions: () => QuestionsScreen,
 }));
