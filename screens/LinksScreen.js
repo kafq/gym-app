@@ -13,6 +13,7 @@ import {
   AppRegistry,
   AlertIOS,
   TextInput,
+  AsyncStorage,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -68,8 +69,18 @@ export default class LinksScreen extends Component {
  * Component Life Cycles
  */
   componentWillMount() {
-    this.listenForItems(this.itemsRef);
     this.getProfile();
+    AsyncStorage.getItem("exercises").then((json) => {
+      try {
+        const exercises = JSON.parse(json);
+        this.setSource(exercises, exercises);
+      } catch(e) {
+
+      }
+    })
+  }
+  componentDidMount() {
+    this.listenForItems(this.itemsRef);
   }
 /**
  * Public functions 
@@ -84,6 +95,7 @@ export default class LinksScreen extends Component {
       dataSource: this.state.dataSource.cloneWithRows(itemsDatasource),
       ... otherState
     })
+    AsyncStorage.setItem("exercises", JSON.stringify(exercises));
   }
   listenForItems(itemsRef) {
     itemsRef.on('value', (snap) => {
@@ -99,10 +111,7 @@ export default class LinksScreen extends Component {
           _key: child.key
         });
       });
-      this.setState({
-        exercises,
-        dataSource: this.state.dataSource.cloneWithRows(exercises)
-      });
+      this.setSource( exercises, exercises );
     });
   }
   async logout() {
@@ -167,6 +176,7 @@ export default class LinksScreen extends Component {
                     </View>
         <ListView
           dataSource={this.state.dataSource}
+          initialListSize = {4}
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.listview}/>

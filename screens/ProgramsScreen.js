@@ -31,8 +31,8 @@ export default class SettingsScreen extends React.Component {
  * Component Life Cycles
  */
   componentWillMount() {
-    this.listenForPrograms(this.programsRef);
     this.listenForExercises(this.exercisesRef);
+    this.listenForPrograms(this.programsRef);
   }
   componentDidMount() {
     let user = firebase.auth().currentUser;
@@ -97,7 +97,7 @@ export default class SettingsScreen extends React.Component {
 
         <ListView
           horizontal
-          pagingEnabled
+          initialListSize = {2}
           showsHorizontalScrollIndicator={false}
           dataSource={this.state.programsDataSource}
           renderRow={this._renderItem.bind(this)}

@@ -71,16 +71,16 @@ class Database {
 
         let path = "/user/" + uid + "/statistics";
 
-        firebase.database().ref(path).push({
-            exerciseId,
-            weight,
-            metric,
-            date: Date.now()
-        });
+        // firebase.database().ref(path).push({
+        //     exerciseId,
+        //     weight,
+        //     metric,
+        //     date: Date.now()
+        // });
 
         firebase.database().ref(path).transaction( (statistics) => {
             if (statistics) {
-                statistics.exercisesDone = statistics.exercisesDone + 1;
+                statistics.exercisesDone++;
             }
             return statistics;
         });
