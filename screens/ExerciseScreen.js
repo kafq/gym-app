@@ -2,15 +2,18 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Picker } from 'react-native';
 import Layout from '../constants/Layout';
 import Tag from '../components/Tag';
-import Database from '../api/database';
 
+import * as firebase from 'firebase';
+import Database from '../api/database';
+import {Components} from 'expo';
 export default class ExerciseScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {
       modalVisible: false,
       weight: '50',
-      metric: 'kg'
+      metric: 'kg',
+      videoLink: 'https://'
     }
   }
   static route = {
@@ -21,6 +24,16 @@ export default class ExerciseScreen extends React.Component {
     },
   };
 
+  componentWillMount() {
+    var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video}.mp4`);
+    storageRef.getDownloadURL().then((url) => {
+      this.setState({
+        videoLink: url
+      })
+    }, function(error) {
+      console.log(error);
+    });
+  }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
@@ -79,9 +92,21 @@ export default class ExerciseScreen extends React.Component {
         </Modal>
 
 
-        <View style={styles.videoContainer}><Text style={styles.textInVideo}>The video will go here</Text></View>
+        <View style={styles.videoContainer}>
+          <Components.Video
+          source={{ uri: this.state.videoLink }}
+          isNetwork = {true}
+          rate={1.0}
+          volume={1.0}
+          muted={false}
+          resizeMode="cover"
+          repeat
+          style={{width: Layout.window.width, height: 200}}
+          />
+        </View>
         <View style={styles.container}>
           <Text style={styles.heading1}>{this.props.route.params.exercise.name}</Text>
+          <Text style={styles.heading1}>{this.props.route.params.exercise.video}</Text>
           <Tag title={'muscle group'} content={this.props.route.params.exercise.muscles} color={'#000'}/>
           <Text>You have passed: {this.props.route.params.exercise.type}</Text>
         </View>

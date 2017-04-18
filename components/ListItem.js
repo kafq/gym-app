@@ -13,6 +13,7 @@ class ListItem extends Component {
     super(props);
     this.state = {
       uriLink: 'not empty string',
+      videoLink: 'not empty string',
     }
   }
   componentWillMount() {

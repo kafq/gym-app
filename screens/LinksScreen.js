@@ -48,6 +48,7 @@ export default class LinksScreen extends Component {
       }),
       uid: "",
       uriLink: "",
+      videoLink: "",
       todo: "",
       todoForm: "",
       filter: "ALL",
@@ -107,6 +108,7 @@ export default class LinksScreen extends Component {
           muscles: child.val().muscles,
           type: child.val().type,
           photo: child.val().photo,
+          video: child.val().video,
           checked: child.val().checked,
           _key: child.key
         });
@@ -221,7 +223,7 @@ export default class LinksScreen extends Component {
     };
 
     return (
-      <ListItem item={item} imageLink={item.photo} onPress={onPress} />
+      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={onPress} />
     );
   }
 }
