@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Image,
   Linking,
@@ -8,26 +8,60 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AsyncStorage
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 import CTACard from '../components/CTACard';
 import ProgramsList from '../components/ProgramsList';
 import Colors from '../constants/Colors';
-import PromoCard from '../components/PromoCard'
+import PromoCard from '../components/PromoCard';
+import HeroCard from '../components/HeroCard';
+import * as firebase from 'firebase';
+import Database from '../api/database';
 
-export default class HomeScreen extends React.Component {
+export default class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      uid: ''
+    }
+  }
   static route = {
     navigationBar: {
       visible: true,
       title: 'Dashboard',
     },
   };
+  componentWillMount() {
+    let id = '';
+    AsyncStorage.getItem("uid").then((json) => {
+      try {
+        const uid = json;
+        this.setState({uid})
+      } catch(e) {
+
+      }
+    })
+  }
+  componentDidMount() {
+    this.getId();
+  }
+  async getId() {
+    try {
+      let uid = await Database.getId();
+      AsyncStorage.setItem("uid", '');
+    } catch(e) {
+
+    }
+  }
 
   render() {
     return (
      <ScrollView>
-       <CTACard />
+       <CTACard/>
+       <TouchableOpacity onPress={this.getId}><Text>Press me</Text></TouchableOpacity>
+       <Text>{this.state.uid}</Text>
        <Text style={styles.title}>Most Popular Programs</Text>
        <ProgramsList />
         <View style={styles.bgRectangular} />

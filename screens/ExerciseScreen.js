@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Picker } from 'react-native';
 import Layout from '../constants/Layout';
 import Tag from '../components/Tag';
-
+import ProgressController from "../components/ProgressController";
 import * as firebase from 'firebase';
 import Database from '../api/database';
 import {Components} from 'expo';
@@ -13,7 +13,8 @@ export default class ExerciseScreen extends React.Component {
       modalVisible: false,
       weight: '50',
       metric: 'kg',
-      videoLink: 'https://'
+      videoLink: 'https://',
+      videoRate: 1.0
     }
   }
   static route = {
@@ -42,8 +43,58 @@ export default class ExerciseScreen extends React.Component {
     console.log(this.state.weight + ' ' + this.state.metric);
     Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric);
   }
+onVideoEnd() {
+        this.videoPlayer.seek(0);
+        this.setState({key: new Date(), currentTime: 0, paused: true});
+    }
+
+    onVideoLoad(e) {
+        this.setState({currentTime: e.currentTime, duration: e.duration});
+    }
+
+    onProgress(e) {
+        this.setState({currentTime: e.currentTime});
+    }
+
+    playOrPauseVideo(paused) {
+        this.setState({paused: !paused});
+    }
+
+    onBackward(currentTime) {
+        let newTime = Math.max(currentTime - FORWARD_DURATION, 0);
+        this.videoPlayer.seek(newTime);
+        this.setState({currentTime: newTime})
+    }
+
+    onForward(currentTime, duration) {
+        if (currentTime + FORWARD_DURATION > duration) {
+            this.onVideoEnd();
+        } else {
+            let newTime = currentTime + FORWARD_DURATION;
+            this.videoPlayer.seek(newTime);
+            this.setState({currentTime: newTime});
+        }
+    }
+
+    getCurrentTimePercentage(currentTime, duration) {
+        if (currentTime > 0) {
+            return parseFloat(currentTime) / parseFloat(duration);
+        } else {
+            return 0;
+        }
+    }
+
+    onProgressChanged(newPercent, paused) {
+        let {duration} = this.state;
+        let newTime = newPercent * duration / 100;
+        this.setState({currentTime: newTime, paused: paused});
+        this.videoPlayer.seek(newTime);
+    }
 
   render() {
+            let {onClosePressed, video, volume} = this.props;
+        let {currentTime, duration, paused} = this.state;
+        const completedPercentage = this.getCurrentTimePercentage(currentTime, duration) * 100;
     return (
       <ScrollView>
          
@@ -93,16 +144,30 @@ export default class ExerciseScreen extends React.Component {
 
 
         <View style={styles.videoContainer}>
+          <TouchableWithoutFeedback onPress={() => {
+            if (this.state.videoRate === 1.0) { this.setState({videoRate: 0})}
+            else {this.setState({videoRate: 1.0})}
+            }}>
           <Components.Video
+          ref={videoPlayer => this.videoPlayer = videoPlayer}
           source={{ uri: this.state.videoLink }}
           isNetwork = {true}
-          rate={1.0}
+          rate={this.state.videoRate}
           volume={1.0}
           muted={false}
+          onEnd={this.onVideoEnd.bind(this)}
+                       onLoad={this.onVideoLoad.bind(this)}
+          onProgress={this.onProgress.bind(this)}
           resizeMode="cover"
           repeat
           style={{width: Layout.window.width, height: 200}}
           />
+           
+          </TouchableWithoutFeedback>
+          <ProgressController duration={duration}
+                                          currentTime={currentTime}
+                                          percent={completedPercentage}
+                                          onNewPercent={this.onProgressChanged.bind(this)}/>
         </View>
         <View style={styles.container}>
           <Text style={styles.heading1}>{this.props.route.params.exercise.name}</Text>

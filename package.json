@@ -23,6 +23,7 @@
     "react-native-flexi-radio-button": "^0.1.10",
     "react-native-swiper": "^1.5.4",
     "react-native-video": "^1.0.0",
+    "react-native-video-player": "^0.6.1",
     "victory-native": "^0.7.1"
   },
   "devDependencies": {

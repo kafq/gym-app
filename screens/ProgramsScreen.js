@@ -109,7 +109,6 @@ export default class SettingsScreen extends React.Component {
 
   _renderItem(item) {
 
-
     return (
       <ProgramCard item={item} uid={this.state.uid} exercises={this.state.exercises}/>
     );

@@ -1,6 +1,9 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import * as firebase from "firebase";
 import { ExpoConfigView } from '@expo/samples';
+const ActionButton = require('../components/ActionButton');
+import CommonStyle from "../constants/common";
 
 export default class SettingsScreen extends React.Component {
   static route = {
@@ -8,7 +11,19 @@ export default class SettingsScreen extends React.Component {
       title: 'exp.json',
     },
   };
+  async logout() {
 
+        try {
+
+            await firebase.auth().signOut();
+
+            this.props.navigator.push('login')
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
   render() {
     return (
       <ScrollView
@@ -19,7 +34,9 @@ export default class SettingsScreen extends React.Component {
            * content, we just wanted to give you a quick view of your config */
         }
         <ExpoConfigView />
-
+        <View>
+          <ActionButton onPress={this.logout} title="Logout" />
+        </View>
       </ScrollView>
     );
   }

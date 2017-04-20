@@ -7,7 +7,8 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
 import  LoginScreen  from './screens/LoginScreen';
 import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
@@ -71,6 +72,15 @@ class AppContainer extends React.Component {
 
     }
 
+  async getId() {
+    try {
+      let uid = await firebase.auth().currentUser.uid;
+      AsyncStorage.setItem("uid", '');
+    } catch(e) {
+
+    }
+  }
+
 
    componentWillMount() {
     this._loadAssetsAsync();
@@ -87,6 +97,7 @@ class AppContainer extends React.Component {
           { 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf') },
         ],
       });
+
     } catch (e) {
       console.warn(
         'There was an error caching assets (see: main.js), perhaps due to a ' +

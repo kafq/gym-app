@@ -12,6 +12,28 @@ class Database {
 
     }
 
+    static listenForExercises() {
+        let ref = firebase.database().ref().child('exercises');
+        var exercises = [];
+        ref.on('value', (snap) => {
+            // get children as an array
+            
+            snap.forEach((child) => {
+                exercises.push({
+                name: child.val().name,
+                muscles: child.val().muscles,
+                type: child.val().type,
+                photo: child.val().photo,
+                video: child.val().video,
+                checked: child.val().checked,
+                _key: child.key
+                });
+            });
+           
+        });
+         return exercises;
+        }
+
     static listenUserTodo(userId, callback) {
 
         let userTodoPath = "/user/" + userId + "/details";
@@ -66,6 +88,7 @@ class Database {
                 programName: ''
             })
     }
+    
     static addExerciseStats(exerciseId, weight, metric) {
         let uid = firebase.auth().currentUser.uid;
 
@@ -91,6 +114,18 @@ class Database {
         firebase.database().ref(path).update({
             day1: newMuscles
         });
+    }
+    static userHasProgram() {
+        let uid = firebase.auth().currentUser.uid;
+        let path = "/user/" + uid + "/ownProgram";
+        firebase.database().ref(path).once('value', (snap) => {
+            if (snap.hasOwnProgram.val()) { return true }
+            else {return false} ;
+        })
+    }
+    static getId() {
+        let uid = firebase.auth().currentUser.uid;
+        return uid;
     }
     static addUserDetails(level, DaysPerWeek) {
          let uid = firebase.auth().currentUser.uid;
