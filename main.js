@@ -75,7 +75,7 @@ class AppContainer extends React.Component {
   async getId() {
     try {
       let uid = await firebase.auth().currentUser.uid;
-      AsyncStorage.setItem("uid", '');
+      AsyncStorage.setItem("uid", uid);
     } catch(e) {
 
     }

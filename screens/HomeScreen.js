@@ -60,9 +60,8 @@ export default class HomeScreen extends Component {
     return (
      <ScrollView>
        <CTACard/>
-       <TouchableOpacity onPress={this.getId}><Text>Press me</Text></TouchableOpacity>
-       <Text>{this.state.uid}</Text>
-       <Text style={styles.title}>Most Popular Programs</Text>
+       {/*<Text>{this.state.uid}</Text>
+       <Text style={styles.title}>Most Popular Programs</Text>*/}
        <ProgramsList />
         <View style={styles.bgRectangular} />
         <PromoCard onPress={this.goToSomewhere}/>

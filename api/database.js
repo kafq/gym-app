@@ -17,7 +17,7 @@ class Database {
         var exercises = [];
         ref.on('value', (snap) => {
             // get children as an array
-            
+            var exercises = [];
             snap.forEach((child) => {
                 exercises.push({
                 name: child.val().name,
@@ -29,9 +29,10 @@ class Database {
                 _key: child.key
                 });
             });
-           
+           console.log(exercises);
+           return exercises;
         });
-         return exercises;
+         
         }
 
     static listenUserTodo(userId, callback) {
@@ -93,13 +94,13 @@ class Database {
         let uid = firebase.auth().currentUser.uid;
 
         let path = "/user/" + uid + "/statistics";
-
-        // firebase.database().ref(path).push({
-        //     exerciseId,
-        //     weight,
-        //     metric,
-        //     date: Date.now()
-        // });
+        let path2 = "/user/" + uid + "/exercisesLogs";
+        firebase.database().ref(path2).push({
+            exerciseId,
+            weight,
+            metric,
+            date: Date.now()
+        });
 
         firebase.database().ref(path).transaction( (statistics) => {
             if (statistics) {

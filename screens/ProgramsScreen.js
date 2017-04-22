@@ -54,6 +54,7 @@ export default class SettingsScreen extends React.Component {
           muscles: child.val().muscles,
           type: child.val().type,
           photo: child.val().photo,
+          video: child.val().video,
           _key: child.key,
         });
       });
@@ -75,6 +76,9 @@ export default class SettingsScreen extends React.Component {
           day1: child.val().day1,
           day2: child.val().day2,
           day3: child.val().day3,
+          day4: child.val().day4,
+          day5: child.val().day5,
+          day6: child.val().day6,
           _key: child.key,
           gender: child.val().gender,
           level: child.val().level,

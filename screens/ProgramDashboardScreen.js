@@ -34,7 +34,7 @@ export default class ExerciseScreen extends React.Component {
        this.setState({
           dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
       });
-      this._retrieveFilteredItems();
+      //this._retrieveFilteredItems();
   }
 
   render() {
@@ -57,17 +57,74 @@ export default class ExerciseScreen extends React.Component {
         <Text>Program name: {this.state.programName}</Text>
         <Text style={styles.textBlackTitle}>Workouts</Text>
         <Divider/>
-        <Text>First day exercises</Text>
-        <Text>{this.props.route.params.program.days}</Text>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this._renderItem.bind(this)}
-          enableEmptySections={true}
-          style={styles.programsContainer}/>
-           <Divider/>
+            {/*<Text>First day exercises</Text>
+            <Text>{this.props.route.params.program.days}</Text>
+            <ListView
+            dataSource={this.state.dataSource}
+            renderRow={this._renderItem.bind(this)}
+            enableEmptySections={true}
+            style={styles.programsContainer}/>
+            <Divider/>*/}
+            {this._retrieveFilteredItems()}
       </ScrollView>
     );
   }
+
+_retrieveFilteredItems(filter, exercises) {
+
+    let days = this.props.route.params.program.days;
+    console.log('Number of days in program: ' + days);
+    let newArr = this.props.route.params.exercises.sort(this.compare('muscles'));
+    for ( i=1; i<=days; i++ ) {
+        console.log('Counter is: ' + i);
+        let day = 'day' + i;
+        let ref = this.props.route.params.program[day];
+        console.log('Ref is: ' + ref)
+
+        const filteredByDay = this.props.route.params.exercises.filter((item) => {
+            return ref.split(', ').includes(item.muscles);
+        })
+
+        const filteredByNumber = this.filterByNumber(filteredByDay, 2);
+        
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(filteredByNumber)
+        })
+
+        return (
+            <View>
+                <Text>{i} day exercises</Text>
+                <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this._renderItem.bind(this)}
+                    enableEmptySections={true}
+                    style={styles.programsContainer}/>
+            </View>
+        )
+    }
+}
+
+filterByNumber = (arrayToFilter, n) => {
+  let muscleToCompareWith = 'brain';
+  let counter = 1;
+  let filtered = [];
+  arrayToFilter.forEach((item) => {
+    if ((item.muscles !== muscleToCompareWith)) {
+      
+      counter = 1;
+      muscleToCompareWith = item.muscles;
+      filtered.push(item);
+      
+    }
+    else if ((item.muscles === muscleToCompareWith) && (counter < n)) {
+      filtered.push(item);
+      counter++;
+    }
+  });
+  console.log(filtered);
+  return filtered;
+}
+
 
 _displayEnrollButton() {
     enrollProgram = () => {
@@ -102,6 +159,7 @@ _displayEnrollButton() {
             );
     }
 }
+
 _displayLeaveButton() {
     leaveProgram = () => {
         Alert.alert(
@@ -127,18 +185,13 @@ _displayLeaveButton() {
     }
 }
 
-_retrieveFilteredItems(filter, exercises) {
-const ref = this.props.route.params.program.day1;
-
-const filteredExercises = this.props.route.params.exercises.filter((item) => {
-
-    return ref.split(', ').includes(item.muscles);
-})
-this.setState({
-    dataSource: this.state.dataSource.cloneWithRows(filteredExercises)
-})
+compare = (property) => {
+    return (a, b) => {
+        if (a[property] < b[property]) return -1;
+        if (a[property] > b[property]) return 1;
+        return 0;
+    }
 }
-
 _renderItem(item) {
 
 
