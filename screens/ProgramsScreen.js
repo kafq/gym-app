@@ -52,10 +52,10 @@ export default class SettingsScreen extends React.Component {
         exercises.push({
           name: child.val().name,
           muscles: child.val().muscles,
-          type: child.val().type,
+          type: child.val().type || 'basic',
           photo: child.val().photo,
-          video: child.val().video,
-          _key: child.key,
+          video: child.val().video || 'https://',
+          _key: child.key.slice(2),
         });
       });
       this.setState({

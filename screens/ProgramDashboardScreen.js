@@ -32,9 +32,9 @@ export default class ExerciseScreen extends React.Component {
           })
       })
        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
+          dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises),
       });
-      //this._retrieveFilteredItems();
+      this._retrieveFilteredItems();
   }
 
   render() {
@@ -65,17 +65,22 @@ export default class ExerciseScreen extends React.Component {
             enableEmptySections={true}
             style={styles.programsContainer}/>
             <Divider/>*/}
-            {this._retrieveFilteredItems()}
+            <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this._renderItem.bind(this)}
+                    enableEmptySections={true}
+                    style={styles.programsContainer}/>
       </ScrollView>
     );
   }
 
 _retrieveFilteredItems(filter, exercises) {
 
-    let days = this.props.route.params.program.days;
+    let days = 1;
     console.log('Number of days in program: ' + days);
     let newArr = this.props.route.params.exercises.sort(this.compare('muscles'));
-    for ( i=1; i<=days; i++ ) {
+    //for ( i=1; i<=days; i++ ) {
+        let i = 1;
         console.log('Counter is: ' + i);
         let day = 'day' + i;
         let ref = this.props.route.params.program[day];
@@ -88,20 +93,10 @@ _retrieveFilteredItems(filter, exercises) {
         const filteredByNumber = this.filterByNumber(filteredByDay, 2);
         
         this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(filteredByNumber)
+            dataSource: this.state.dataSource.cloneWithRows(filteredByNumber),
+            exercises: filteredByNumber,
         })
-
-        return (
-            <View>
-                <Text>{i} day exercises</Text>
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderItem.bind(this)}
-                    enableEmptySections={true}
-                    style={styles.programsContainer}/>
-            </View>
-        )
-    }
+  //  }
 }
 
 filterByNumber = (arrayToFilter, n) => {
@@ -128,7 +123,9 @@ filterByNumber = (arrayToFilter, n) => {
 
 _displayEnrollButton() {
     enrollProgram = () => {
-        Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program)
+        console.log(this.state.exercises);
+        Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
+        Database.saveExerciseSequence(this.props.route.params.uid, this.state.exercises);
     }
     goToRoute = () => {
     this.props.navigator.push('editProgramDash', {

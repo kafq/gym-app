@@ -82,6 +82,16 @@ class Database {
 
             })
     }
+
+    static saveExerciseSequence(uid, exercises) {
+            
+            let path = "/user/" + uid + "/exerciseSequence";
+           
+            firebase.database().ref(path).set({
+                exercises,
+            })
+    }
+
     static leaveProgram(uid) {
             let path = "/user/" + uid + "/ownProgram";
 
@@ -116,17 +126,26 @@ class Database {
             day1: newMuscles
         });
     }
-    static userHasProgram() {
-        let uid = firebase.auth().currentUser.uid;
+    static userHasProgram(uid) {
         let path = "/user/" + uid + "/ownProgram";
-        firebase.database().ref(path).once('value', (snap) => {
-            if (snap.hasOwnProgram.val()) { return true }
-            else {return false} ;
-        })
+        console.log('Path is: ' + path)
+        firebase.database().ref(path).on('value', (snap) => {
+            //console.log(snap.hasProgram.val());
+            console.log(snap.val());
+            if (snap.val().hasProgram === true) { return true }
+            else {return false};
+        }, (e) => {console.log(e)})
     }
     static getId() {
-        let uid = firebase.auth().currentUser.uid;
-        return uid;
+
+        let checkAuthInterval = setInterval(function(){
+        if ( typeof firebase.auth().currentUser.uid !== undefined ) {
+            clearInterval(checkAuthInterval);
+            console.log('From Database.js: ' + firebase.auth().currentUser.uid);
+            return firebase.auth().currentUser.uid;
+        }
+        }, 500);
+
     }
     static addUserDetails(level, DaysPerWeek) {
          let uid = firebase.auth().currentUser.uid;

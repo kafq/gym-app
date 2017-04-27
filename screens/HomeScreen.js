@@ -24,7 +24,8 @@ export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      uid: ''
+      uid: '',
+      hasProgram: false
     }
   }
   static route = {
@@ -33,35 +34,61 @@ export default class HomeScreen extends Component {
       title: 'Dashboard',
     },
   };
-  componentWillMount() {
-    let id = '';
-    AsyncStorage.getItem("uid").then((json) => {
-      try {
-        const uid = json;
-        this.setState({uid})
-      } catch(e) {
-
-      }
-    })
+  async componentDidMount() {
+    //let user = firebase.auth().currentUser;
+    //console.log(user);
+    this.retrieveUserId();
+}
+renderCard = () => {
+  if (this.state.hasProgram) {
+  return(
+    <View><Text>There is a program!</Text></View>
+  );
+}
+  else {
+    return (
+      <View><Text>No program</Text></View>
+    )
   }
-  componentDidMount() {
-    this.getId();
-  }
-  async getId() {
-    try {
-      let uid = await Database.getId();
-      AsyncStorage.setItem("uid", '');
-    } catch(e) {
+}
+retrieveUserId() {
+  let that = this;
+      let renderAction = setInterval(() => {
+        if ( firebase.auth().currentUser.uid !== null ) {
+            clearInterval(renderAction);
+            let uid = firebase.auth().currentUser.uid;
+            this.setState({uid});
+            let path = "/user/" + uid + "/ownProgram";
+            firebase.database().ref(path).on('value', (snap) => {
+              if (snap.val().hasProgram) { 
+                console.log('Program found');
+                that.setState({hasProgram: true});
+                console.log(that.state);
+                return true;
+                actionCard = (
+                  <Text>OH TIJ BOH TI MOI</Text>
+                )
+              }
+              else {
+                console.log('No program here')
+                that.setState({hasProgram: false})
+                return false};
+            }, (e) => {console.log(e)})
+            return firebase.auth().currentUser.uid;
+        } else {
+          console.log('Wait for it');
+        }
+      }, 800);
 
-    }
-  }
-
+}
   render() {
+    let actionCard = (<Text>Privet</Text>)
     return (
      <ScrollView>
        <CTACard/>
-       {/*<Text>{this.state.uid}</Text>
-       <Text style={styles.title}>Most Popular Programs</Text>*/}
+       <Text>{this.state.uid || 'Hello'}</Text>
+       {this.renderCard()}
+       <Text style={styles.title}>Most Popular Programs</Text>
        <ProgramsList />
         <View style={styles.bgRectangular} />
         <PromoCard onPress={this.goToSomewhere}/>

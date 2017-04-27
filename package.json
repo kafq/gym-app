@@ -27,6 +27,8 @@
     "victory-native": "^0.7.1"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-google": "^0.7.1",
     "jest-expo": "~0.2.1"
   }
 }

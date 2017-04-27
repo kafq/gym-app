@@ -8,13 +8,14 @@ import {
   View,
   Text,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
 } from 'react-native';
 import  LoginScreen  from './screens/LoginScreen';
 import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import * as firebase from "firebase";
 import Firebase from "./api/firebase";
+import Database from "./api/database";
 import Router from './navigation/Router';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
@@ -58,30 +59,6 @@ class AppContainer extends React.Component {
 
   }
 
-  async logout() {
-
-        try {
-
-            await firebase.auth().signOut();
-
-            this.props.navigator.push('login')
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-
-  async getId() {
-    try {
-      let uid = await firebase.auth().currentUser.uid;
-      AsyncStorage.setItem("uid", uid);
-    } catch(e) {
-
-    }
-  }
-
-
    componentWillMount() {
     this._loadAssetsAsync();
   }
@@ -97,7 +74,6 @@ class AppContainer extends React.Component {
           { 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf') },
         ],
       });
-
     } catch (e) {
       console.warn(
         'There was an error caching assets (see: main.js), perhaps due to a ' +
@@ -105,7 +81,10 @@ class AppContainer extends React.Component {
       );
       console.log(e.message);
     } finally {
-      this.setState({ appIsReady: true });
+      let timeout = setTimeout(() => {
+          this.setState({ appIsReady: true });
+      }, 5000)
+      
     }
   }
 
