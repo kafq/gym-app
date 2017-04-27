@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 import Layout from '../constants/Layout';
@@ -27,12 +27,11 @@ class HeroCard extends Component {
             </Text>
             <Button
             buttonStyle={styles.ActionButton}
-            onPress={this.goToSomewhere}
+            onPress={this.goToRoute('exercises')}
   title='Continue Program' />
   <Text style={styles.paragraphRight}>Next Exercise:
             </Text>
-            <Text style={styles.paragraphRight}>View Program
-            </Text>
+            <TouchableOpacity onPress={this.goToRoute('programDashboard')}><Text style={styles.paragraphRight}> View Program </Text></TouchableOpacity>
 
   		</View>
 
@@ -40,8 +39,10 @@ class HeroCard extends Component {
         </View>
     );
   }
-  goToSomewhere = () => {
-    this.props.navigator.push('links');
+  goToRoute = (route) => {
+    return () => {
+      this.props.navigator.push(route);
+    }
   }
 }
 

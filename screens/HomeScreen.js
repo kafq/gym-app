@@ -34,25 +34,29 @@ export default class HomeScreen extends Component {
       title: 'Dashboard',
     },
   };
-  async componentDidMount() {
+componentDidMount() {
     //let user = firebase.auth().currentUser;
     //console.log(user);
     this.retrieveUserId();
 }
 renderCard = () => {
   if (this.state.hasProgram) {
-  return(
-    <View><Text>There is a program!</Text></View>
-  );
-}
+    return(
+      <View>
+        <HeroCard/>
+      </View>
+    );
+  }
   else {
     return (
-      <View><Text>No program</Text></View>
+      <View>
+        <CTACard/>
+      </View>
     )
   }
 }
 retrieveUserId() {
-  let that = this;
+  //let that = this;
       let renderAction = setInterval(() => {
         if ( firebase.auth().currentUser.uid !== null ) {
             clearInterval(renderAction);
@@ -62,8 +66,8 @@ retrieveUserId() {
             firebase.database().ref(path).on('value', (snap) => {
               if (snap.val().hasProgram) { 
                 console.log('Program found');
-                that.setState({hasProgram: true});
-                console.log(that.state);
+                this.setState({hasProgram: true});
+                console.log(this.state);
                 return true;
                 actionCard = (
                   <Text>OH TIJ BOH TI MOI</Text>
@@ -71,22 +75,20 @@ retrieveUserId() {
               }
               else {
                 console.log('No program here')
-                that.setState({hasProgram: false})
+                this.setState({hasProgram: false})
                 return false};
             }, (e) => {console.log(e)})
             return firebase.auth().currentUser.uid;
         } else {
           console.log('Wait for it');
         }
-      }, 800);
+      }, 700);
 
 }
   render() {
     let actionCard = (<Text>Privet</Text>)
     return (
      <ScrollView>
-       <CTACard/>
-       <Text>{this.state.uid || 'Hello'}</Text>
        {this.renderCard()}
        <Text style={styles.title}>Most Popular Programs</Text>
        <ProgramsList />

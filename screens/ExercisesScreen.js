@@ -76,7 +76,7 @@ export default class ExercisesScreen extends Component {
  async componentDidMount() {
     let exercises = await Database.listenForExercises();
     await console.log(exercises);
-    //this.setSource( exercises, exercises );
+    this.setSource( exercises, exercises );
   }
 /**
  * Public functions 
