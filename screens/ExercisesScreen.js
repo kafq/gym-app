@@ -60,9 +60,7 @@ export default class ExercisesScreen extends Component {
       title: 'Library',
     },
   };
-/**
- * Component Life Cycles
- */
+
   componentWillMount() {
     AsyncStorage.getItem("exercises").then((json) => {
       try {
@@ -73,14 +71,7 @@ export default class ExercisesScreen extends Component {
       }
     })
   }
- async componentDidMount() {
-    let exercises = await Database.listenForExercises();
-    await console.log(exercises);
-    this.setSource( exercises, exercises );
-  }
-/**
- * Public functions 
- */
+
   handleFilter(filter) {
     this.setSource(this.state.exercises, filterExercises(filter, this.state.exercises), { filter })
   }
@@ -90,8 +81,7 @@ export default class ExercisesScreen extends Component {
       exercises,
       dataSource: this.state.dataSource.cloneWithRows(itemsDatasource),
       ... otherState
-    })
-    AsyncStorage.setItem("exercises", JSON.stringify(exercises));
+    });
   }
 
   render() {

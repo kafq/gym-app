@@ -14,10 +14,10 @@ class Database {
 
     static listenForExercises() {
         let ref = firebase.database().ref().child('exercises');
-        var exercises = [];
+        let exercises = [];
         ref.on('value', (snap) => {
             // get children as an array
-            var exercises = [];
+            //var exercises = [];
             snap.forEach((child) => {
                 exercises.push({
                 name: child.val().name,
@@ -33,29 +33,36 @@ class Database {
            return exercises;
         });
          
-        }
-
-    static listenUserTodo(userId, callback) {
-
-        let userTodoPath = "/user/" + userId + "/details";
-
-        firebase.database().ref(userTodoPath).on('value', (snapshot) => {
-
-            var todo = "";
-
-            if (snapshot.val()) {
-                todo = snapshot.val().todo
-            }
-
-            callback(todo)
-        });
     }
+    
+    static saveExerciseSequence(uid, exercises) {
+            
+            let path = "/user/" + uid + "/ownProgram/exerciseSequence";
+           
+            firebase.database().ref(path).set({
+                exercises,
+            })
+    }
+
+    static getOwnExercises(uid) {
+            
+            //let path = "/user/" + uid + "/details";
+           //console.log('Path is: ' + path);
+
+            let exercises = firebase.database().ref().child('user').child(uid).child('ownProgram').child('exerciseSequence').once('value').then((snap) => {
+                let exercises = snap.val().exercises;
+                console.log(snap.val().exercises);
+                return snap.val().exercises;
+            });
+
+            return exercises;
+    }
+
     static getUserProgram(uid, callback) {
   
         let path = "/user/" + uid + "/ownProgram";
         
         firebase.database().ref(path).on('value', (snap) => {
-        
             let programName = "";
             if (snap.val()) {
                 programName = snap.val().programName
@@ -83,14 +90,7 @@ class Database {
             })
     }
 
-    static saveExerciseSequence(uid, exercises) {
-            
-            let path = "/user/" + uid + "/exerciseSequence";
-           
-            firebase.database().ref(path).set({
-                exercises,
-            })
-    }
+
 
     static leaveProgram(uid) {
             let path = "/user/" + uid + "/ownProgram";

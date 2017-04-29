@@ -5,7 +5,7 @@ import * as firebase from 'firebase';
 import {withNavigation} from '@expo/ex-navigation';
 
 
-const { View, TouchableHighlight, Text, Image } = ReactNative;
+const { View, TouchableHighlight, Text, Image, TouchableOpacity } = ReactNative;
 
 @withNavigation
 class ListItem extends Component {
@@ -31,6 +31,16 @@ class ListItem extends Component {
       exercise: this.props.item
     })
   }
+  goToReplace = () => {
+    this.props.navigator.push('replaceExercise', {
+      exercise: this.props.item
+    })
+  }
+  displayAlternativeButton = () => {
+    if (this.props.item.own) {
+      return (<TouchableOpacity><Text>Replace exercise</Text></TouchableOpacity>)
+    }
+  }
   render() {
     return (
       <TouchableHighlight 
@@ -44,6 +54,7 @@ class ListItem extends Component {
             <Text style={styles.title}>{this.props.item.name}</Text>
             <Text>{this.props.item.muscles}</Text>
             <Text>{this.props.item.type}</Text>
+            {this.displayAlternativeButton()}
           </View>
         </View>
       </TouchableHighlight>

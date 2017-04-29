@@ -3,7 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, 
 import Divider from '../components/Divider';
 import ListItem from '../components/ListItem';
 import Database from '../api/database';
-
+import * as firebase from 'firebase';
 export default class ExerciseScreen extends React.Component {
   constructor(props) {
       super(props);
@@ -11,7 +11,8 @@ export default class ExerciseScreen extends React.Component {
           dataSource: new ListView.DataSource({
               rowHasChanged: (r1, r2) => r1 !== r2
           }),
-          programName: 'attempt1'
+          programName: 'attempt1',
+          ownProgram: true
       }
   }
   static route = {
@@ -22,7 +23,7 @@ export default class ExerciseScreen extends React.Component {
     },
   };
   componentWillMount() {
-     
+
   }
   componentDidMount() {
       let uid = this.props.route.params.uid;
@@ -34,7 +35,13 @@ export default class ExerciseScreen extends React.Component {
        this.setState({
           dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises),
       });
+         
+    if (this.state.ownProgram) {
+       this.rerenderListView();
+   }  
+   else {
       this._retrieveFilteredItems();
+   }
   }
 
   render() {
@@ -120,12 +127,31 @@ filterByNumber = (arrayToFilter, n) => {
   return filtered;
 }
 
-
+rerenderListView = () => {
+    //let ownExercises = Database.getOwnExercises(this.props.route.params.uid);
+    firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
+        var ownExercises = [];
+        console.log(snap.val().exercises);
+        snap.val().exercises.forEach((exercise) => {
+            ownExercises.push({
+                ...exercise,
+                own: true
+            });
+        });
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(ownExercises)
+        })
+    })
+    //console.log("ownExercises are here:");
+    //console.log(ownExercises);
+}
 _displayEnrollButton() {
     enrollProgram = () => {
         console.log(this.state.exercises);
         Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
         Database.saveExerciseSequence(this.props.route.params.uid, this.state.exercises);
+        this.rerenderListView();
+       // this.rerenderListView();
     }
     goToRoute = () => {
     this.props.navigator.push('editProgramDash', {

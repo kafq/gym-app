@@ -18,16 +18,12 @@ class HeroCard extends Component {
         style={styles.header}>
        	 <View style={styles.HeroContainer}>
             <Text style={styles.title}>YOUR PROGRAM</Text>
-            <Text style={styles.title}>No Pain - No Gain 
-            </Text>
-            
-            <Text style={styles.paragraph}>done this week{"\n"}props.days
-            </Text>
-            <Text style={styles.paragraph}>this.props.programmname
-            </Text>
+            <Text style={styles.title}>{this.props.program.programName} </Text>
+            <Text style={styles.paragraph}>done this week{"\n"}props.days</Text>
+            <Text style={styles.paragraph}>this.props.programmname</Text>
             <Button
             buttonStyle={styles.ActionButton}
-            onPress={this.goToRoute('exercises')}
+            onPress={this.goToRoute('programs')}
   title='Continue Program' />
   <Text style={styles.paragraphRight}>Next Exercise:
             </Text>

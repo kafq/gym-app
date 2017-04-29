@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, ListView, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, ListView, TouchableOpacity, AsyncStorage } from 'react-native';
 import * as firebase from 'firebase';
 import ProgramCard from '../components/ProgramCard';
 const styles = require('../constants/styles.js');
@@ -31,7 +31,14 @@ export default class SettingsScreen extends React.Component {
  * Component Life Cycles
  */
   componentWillMount() {
-    this.listenForExercises(this.exercisesRef);
+    AsyncStorage.getItem("exercises").then((json) => {
+      try {
+        const exercises = JSON.parse(json);
+        this.setState({exercises});
+      } catch(e) {
+
+      }
+    })
     this.listenForPrograms(this.programsRef);
   }
   componentDidMount() {
@@ -42,28 +49,6 @@ export default class SettingsScreen extends React.Component {
   }
   getRef() {
     return firebase.database().ref();
-  }
-  listenForExercises(exercisesRef) {
-    exercisesRef.on('value', (snap) => {
-      // get children as an array
-      var exercises = [];
-      
-      snap.forEach((child) => {
-        exercises.push({
-          name: child.val().name,
-          muscles: child.val().muscles,
-          type: child.val().type || 'basic',
-          photo: child.val().photo,
-          video: child.val().video || 'https://',
-          _key: child.key.slice(2),
-        });
-      });
-      this.setState({
-        exercises,
-        exercisesDataSource: this.state.exercisesDataSource.cloneWithRows(exercises)
-      });
-    });
-    
   }
 
   listenForPrograms(programsRef) {

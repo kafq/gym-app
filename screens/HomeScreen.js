@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  AsyncStorage
+  AsyncStorage,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -25,7 +25,8 @@ export default class HomeScreen extends Component {
     super(props);
     this.state = {
       uid: '',
-      hasProgram: false
+      hasProgram: false,
+      ownProgram: ''
     }
   }
   static route = {
@@ -38,12 +39,34 @@ componentDidMount() {
     //let user = firebase.auth().currentUser;
     //console.log(user);
     this.retrieveUserId();
+    this.listenForExercises();
 }
+  listenForExercises() {
+    firebase.database().ref().child('exercises').on('value', (snap) => {
+      // get children as an array
+      var exercises = [];
+      
+      snap.forEach((child) => {
+        exercises.push({
+          name: child.val().name,
+          muscles: child.val().muscles,
+          type: child.val().type || 'basic',
+          photo: child.val().photo,
+          video: child.val().video || 'https://',
+          _key: child.key.slice(2),
+        });
+      });
+      console.log(exercises);
+      AsyncStorage.setItem('exercises', JSON.stringify(exercises));
+    });
+    
+  }
+
 renderCard = () => {
   if (this.state.hasProgram) {
     return(
       <View>
-        <HeroCard/>
+        <HeroCard program={this.state.ownProgram}/>
       </View>
     );
   }
@@ -67,6 +90,7 @@ retrieveUserId() {
               if (snap.val().hasProgram) { 
                 console.log('Program found');
                 this.setState({hasProgram: true});
+                this.setState({ownProgram: snap.val()});
                 console.log(this.state);
                 return true;
                 actionCard = (
