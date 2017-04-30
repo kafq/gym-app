@@ -12,6 +12,7 @@ import LogedInDash from '../screens/LogedInDash';
 import EditProgramScreen from '../screens/EditProgramScreen';
 import EditProgramDashboard from '../screens/EditProgramDashboard';
 import QuestionsScreen from '../screens/QuestionsScreen';
+import ReplaceExerciseScreen from '../screens/ReplaceExerciseScreen';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -26,4 +27,5 @@ export default createRouter(() => ({
   editProgramDash: () => EditProgramDashboard,
   editProgram: () => EditProgramScreen,
   questions: () => QuestionsScreen,
+  replaceExercise: () => ReplaceExerciseScreen,
 }));

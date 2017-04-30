@@ -33,12 +33,12 @@ class ListItem extends Component {
   }
   goToReplace = () => {
     this.props.navigator.push('replaceExercise', {
-      exercise: this.props.item
+      item: this.props.item
     })
   }
   displayAlternativeButton = () => {
     if (this.props.item.own) {
-      return (<TouchableOpacity><Text>Replace exercise</Text></TouchableOpacity>)
+      return (<TouchableOpacity onPress={this.goToReplace}><Text>Replace exercise</Text></TouchableOpacity>)
     }
   }
   render() {
