@@ -104,8 +104,8 @@ class Database {
         let uid = firebase.auth().currentUser.uid;
 
         let path = "/user/" + uid + "/statistics";
-        let path2 = "/user/" + uid + "/exercisesLogs";
-        firebase.database().ref(path2).push({
+        let path2 = "/user/" + uid + "/exercisesLogs/" + Date.now();
+        firebase.database().ref(path2).set({
             exerciseId,
             weight,
             metric,

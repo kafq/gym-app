@@ -16,6 +16,7 @@ class ListItem extends Component {
       videoLink: 'not empty string',
     }
   }
+
   componentWillMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.imageLink}.png`);
     storageRef.getDownloadURL().then((url) => {
@@ -26,26 +27,18 @@ class ListItem extends Component {
       console.log(error);
     });
   }
-  goToRoute = () => {
-    this.props.navigator.push('exercise', {
-      exercise: this.props.item
-    })
-  }
-  goToReplace = () => {
-    this.props.navigator.push('replaceExercise', {
-      item: this.props.item
-    })
-  }
+
   displayAlternativeButton = () => {
     if (this.props.item.own) {
-      return (<TouchableOpacity onPress={this.goToReplace}><Text>Replace exercise</Text></TouchableOpacity>)
+      return (<TouchableOpacity onPress={this.props.onReplace}><Text>Replace exercise</Text></TouchableOpacity>)
     }
   }
+  
   render() {
     return (
       <TouchableHighlight 
         underlayColor={'#920707'}
-        onPress={this.goToRoute}>
+        onPress={this.props.onPress}>
         <View style={styles.exerciseContainer}>
           <View style={styles.imageContainer}>
             <Image source={{uri: this.state.uriLink || require('../assets/images/CTA.png')}} style={{flex: 1, resizeMode: 'cover'}}></Image>

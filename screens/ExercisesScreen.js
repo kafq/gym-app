@@ -76,6 +76,7 @@ export default class ExercisesScreen extends Component {
     this.setSource(this.state.exercises, filterExercises(filter, this.state.exercises), { filter })
   }
   
+  
   setSource(exercises, itemsDatasource, otherState = {}){
     this.setState({
       exercises,
@@ -109,9 +110,13 @@ export default class ExercisesScreen extends Component {
  * Private Functions
  */
   _renderItem(item) {
-
+    goToRoute = () => {
+    this.props.navigator.push('exercise', {
+      exercise: item
+    })
+  }
     return (
-      <ListItem item={item} imageLink={item.photo} videoLink={item.video} />
+      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={goToRoute}/>
     );
   }
 }

@@ -12,7 +12,8 @@ export default class ExerciseScreen extends React.Component {
               rowHasChanged: (r1, r2) => r1 !== r2
           }),
           programName: 'attempt1',
-          ownProgram: true
+          ownProgram: false,
+          sequence: [],
       }
   }
   static route = {
@@ -131,7 +132,7 @@ rerenderListView = () => {
     //let ownExercises = Database.getOwnExercises(this.props.route.params.uid);
     firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
         var ownExercises = [];
-        console.log(snap.val().exercises);
+        //console.log(snap.val().exercises);
         snap.val().exercises.forEach((exercise) => {
             ownExercises.push({
                 ...exercise,
@@ -139,7 +140,8 @@ rerenderListView = () => {
             });
         });
         this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(ownExercises)
+            dataSource: this.state.dataSource.cloneWithRows(ownExercises),
+            sequence: ownExercises,
         })
     })
     //console.log("ownExercises are here:");
@@ -147,9 +149,9 @@ rerenderListView = () => {
 }
 _displayEnrollButton() {
     enrollProgram = () => {
-        console.log(this.state.exercises);
         Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
         Database.saveExerciseSequence(this.props.route.params.uid, this.state.exercises);
+        this.setState({ownProgram: true})
         this.rerenderListView();
        // this.rerenderListView();
     }
@@ -189,7 +191,7 @@ _displayLeaveButton() {
             'Leave Program',
             'You are about to leave your program, are you sure?',
             [   { text: 'Cancel', onPress: () => {console.log('Cancelled')}, style: 'cancel' },
-                { text: 'Leave Program', onPress: () => {Database.leaveProgram(this.props.route.params.uid)} }
+                { text: 'Leave Program', onPress: () => {this.setState({ownProgram: false}); Database.leaveProgram(this.props.route.params.uid)} }
             ]
         );
     }
@@ -216,10 +218,19 @@ compare = (property) => {
     }
 }
 _renderItem(item) {
-
-
+    goToReplace = () => {
+    this.props.navigator.push('replaceExercise', {
+      item: item,
+      sequence: this.state.sequence
+    })
+  }
+  goToRoute = () => {
+    this.props.navigator.push('exercise', {
+      exercise: item,
+    })
+  }
     return (
-      <ListItem item={item} imageLink={item.photo}/>
+      <ListItem item={item} imageLink={item.photo} onPress={goToRoute} onReplace={goToReplace}/>
     );
   }
 }

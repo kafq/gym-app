@@ -10,6 +10,8 @@ import {
  ScrollView,
 } from 'react-native';
 
+import * as firebase from 'firebase';
+
 import { MonoText } from '../components/StyledText';
 
 const ListItem = require('../components/ListItem');
@@ -42,11 +44,7 @@ export default class ReplaceExerciseScreen extends Component {
       }
     })
   }
-  replaceExerciseWithAlternative =  (replaceId, replaceWithId) => {
-    var replacePosition = sequence.map( (e) => { e.id }).indexOf(replaceId);
-    var replaceWithPosition = library.map( (e) => { e.id }).indexOf(replaceWithId);
-    sequence[replacePosition] = library[replaceWithPosition];
-    }
+
   setSource(exercises, itemsDatasource, otherState = {}){
     this.setState({
       exercises,
@@ -78,8 +76,20 @@ export default class ReplaceExerciseScreen extends Component {
   }
   
   _renderItem(item) {
+    replaceExerciseWithAlternative =  (replaceId, itemToReplaceWith) => {
+
+        let replacePosition = this.props.route.params.sequence.map( (e) => { return e._key; }).indexOf(replaceId);
+        this.props.route.params.sequence[replacePosition] = itemToReplaceWith;
+        let uid = firebase.auth().currentUser.uid;
+        
+        firebase.database().ref('/user/' + uid + '/ownProgram/exerciseSequence/').update({
+            exercises: this.props.route.params.sequence
+        });
+        
+        this.props.navigator.pop();
+    }
     return (
-      <ListItem item={item} imageLink={item.photo} videoLink={item.video} />
+      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={ () => {replaceExerciseWithAlternative(this.props.route.params.item._key, item)} }/>
     );
   }
 }
