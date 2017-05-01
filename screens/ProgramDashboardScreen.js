@@ -160,7 +160,21 @@ _displayEnrollButton() {
       program: this.props.route.params.program,
       uid: this.props.route.params.uid
     })
-  }
+}
+let that = this;
+continueProgram = () => {
+        console.log('Sequence below');
+        console.log(this.state.sequence);
+        let index = 1;
+        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+        console.log('Index from database.js is ' + index);
+        console.log('exercise is ' + that.state.sequence[index]);
+        this.props.navigator.push('exercise', {
+            exercise: that.state.sequence[index],
+            insideWorkout: true,
+            sequence: this.state.sequence
+        })
+    }
     switch (this.state.programName) {
         case '':
             return(
@@ -173,6 +187,7 @@ _displayEnrollButton() {
                 <View>
                     <Text>THIS YOUR PROGRAM</Text>
                     <TouchableOpacity onPress={goToRoute}><Text>EDIT THE PROGRAM</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={continueProgram}><Text>CONTINUE THE PROGRAM</Text></TouchableOpacity>
                 </View>
 
             );

@@ -41,6 +41,7 @@ class Database {
            
             firebase.database().ref(path).set({
                 exercises,
+                currentExerciseIndex: 0
             })
     }
 
@@ -100,7 +101,20 @@ class Database {
             })
     }
     
-    static addExerciseStats(exerciseId, weight, metric) {
+    static getCurrentExerciseIndex(callback) {
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/ownProgram/exerciseSequence/';
+        firebase.database().ref(path).on('value', (snap) => {
+            console.log(snap.val());
+            let index = snap.val().currentExerciseIndex;
+            console.log('Index is' + index);
+            callback(index);
+        })
+    }
+    static completeExercise(){
+        
+    }
+    static addExerciseStats(exerciseId, weight, metric, ownExercise) {
         let uid = firebase.auth().currentUser.uid;
 
         let path = "/user/" + uid + "/statistics";
@@ -118,6 +132,15 @@ class Database {
             }
             return statistics;
         });
+
+        if (ownExercise) {
+            firebase.database().ref('/user/' + uid + '/ownProgram/exerciseSequence').transaction( (index) => {
+                if (index) {
+                    index.currentExerciseIndex ++;
+                }
+                return index;
+            });
+        }
     }
     static updateProgram(newMuscles) {
         let uid = firebase.auth().currentUser.uid;

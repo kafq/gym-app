@@ -26,7 +26,7 @@ export default class ExerciseScreen extends React.Component {
   };
 
   componentWillMount() {
-    var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video}.mp4`);
+    var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video || 'id1'}.mp4`);
     storageRef.getDownloadURL().then((url) => {
       this.setState({
         videoLink: url
@@ -43,7 +43,31 @@ export default class ExerciseScreen extends React.Component {
     console.log(this.state.weight + ' ' + this.state.metric);
     Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric);
   }
-onVideoEnd() {
+   
+   renderNextButton = () => {
+     goToNext = () => {
+       Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
+       let index = 0;
+       Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+       this.props.navigator.push('exercise', {
+         exercise: this.props.route.params.sequence[index],
+         insideWorkout: true,
+         sequence: this.props.route.params.sequence
+       });
+     }
+     if (this.props.route.params.insideWorkout) {
+       return(
+         <TouchableOpacity
+          onPress={goToNext}>
+           <Text>
+             Go to next exercise
+           </Text>
+         </TouchableOpacity>
+       )
+     }
+   }
+
+   onVideoEnd() {
         this.videoPlayer.seek(0);
         this.setState({key: new Date(), currentTime: 0, paused: true});
     }
@@ -179,6 +203,7 @@ onVideoEnd() {
           this.setModalVisible(true)
         }}>
         <View style={styles.button}>
+          {this.renderNextButton()}
         <Text style={styles.textWhite}>Input data</Text>
         </View>
         </TouchableOpacity>
