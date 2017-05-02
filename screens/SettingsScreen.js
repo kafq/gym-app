@@ -1,16 +1,24 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import * as firebase from "firebase";
 import { ExpoConfigView } from '@expo/samples';
 const ActionButton = require('../components/ActionButton');
 import CommonStyle from "../constants/common";
 
 export default class SettingsScreen extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      own: false
+    }
+  }
   static route = {
     navigationBar: {
       title: 'exp.json',
     },
   };
+  
   async logout() {
 
         try {
@@ -24,6 +32,9 @@ export default class SettingsScreen extends React.Component {
         }
 
     }
+    showText = () => {
+      
+    }
   render() {
     return (
       <ScrollView
@@ -33,7 +44,8 @@ export default class SettingsScreen extends React.Component {
         {/* Go ahead and delete ExpoConfigView and replace it with your
            * content, we just wanted to give you a quick view of your config */
         }
-        <ExpoConfigView />
+        <Text>{this.state.own ? 'True' : 'false'}</Text>
+        <TouchableOpacity onPress={() => {this.setState({own: !this.state.own})}}><Text>Change state</Text></TouchableOpacity>
         <View>
           <ActionButton onPress={this.logout} title="Logout" />
         </View>

@@ -46,6 +46,9 @@ export default class ExerciseScreen extends React.Component {
    
    renderNextButton = () => {
      goToNext = () => {
+       if (!this.state.paused) {
+       this.setState({paused: !this.state.paused})
+       }
        Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
        let index = 0;
        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});

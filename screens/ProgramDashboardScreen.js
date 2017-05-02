@@ -26,6 +26,9 @@ export default class ExerciseScreen extends React.Component {
   componentWillMount() {
 
   }
+  componentWillUnmount() {
+      console.log('State of program in unMount is: ' + this.state.ownProgram);
+  }
   componentDidMount() {
       let uid = this.props.route.params.uid;
       Database.getUserProgram(uid, (programName) => {
