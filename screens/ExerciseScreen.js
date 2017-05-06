@@ -6,6 +6,10 @@ import ProgressController from "../components/ProgressController";
 import * as firebase from 'firebase';
 import Database from '../api/database';
 import {Components} from 'expo';
+
+import { NavigationStyles } from '@expo/ex-navigation';
+
+
 export default class ExerciseScreen extends React.Component {
   constructor(props){
     super(props);
@@ -23,7 +27,11 @@ export default class ExerciseScreen extends React.Component {
         return `Do ${params.exercise.name}`
       }
     },
+    styles: {
+      ...NavigationStyles.SlideHorizontal,
+    },
   };
+
 
   componentWillMount() {
     var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video || 'id1'}.mp4`);
@@ -52,7 +60,7 @@ export default class ExerciseScreen extends React.Component {
        Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
        let index = 0;
        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-       this.props.navigator.push('exercise', {
+       this.props.navigator.replace('exercise', {
          exercise: this.props.route.params.sequence[index],
          insideWorkout: true,
          sequence: this.props.route.params.sequence
