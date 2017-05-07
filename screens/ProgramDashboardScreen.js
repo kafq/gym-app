@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import Divider from '../components/Divider';
 import ListItem from '../components/ListItem';
 import Database from '../api/database';
@@ -23,12 +23,7 @@ export default class ExerciseScreen extends React.Component {
       }
     },
   };
-  componentWillMount() {
 
-  }
-  componentWillUnmount() {
-      console.log('State of program in unMount is: ' + this.state.ownProgram);
-  }
   componentDidMount() {
       let uid = this.props.route.params.uid;
       Database.getUserProgram(uid, (programName) => {
@@ -39,15 +34,25 @@ export default class ExerciseScreen extends React.Component {
        this.setState({
           dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises),
       });
-         
-    if (this.state.ownProgram) {
-       this.rerenderListView();
-   }  
-   else {
-      this._retrieveFilteredItems();
-   }
+      this.renderExercises();
   }
-
+  async renderExercises() {
+    let ownProgramKey = '';
+    await AsyncStorage.getItem('ownProgram').then( (program) => {
+        const ownProgram = JSON.parse(program); 
+        ownProgramKey = ownProgram._key;
+    })
+    let currentProgramKey = await this.props.route.params.program._key;
+    console.log('current program is ' + currentProgramKey);
+    console.log('ownProgramKey is ' + ownProgramKey);
+    console.log(currentProgramKey === ownProgramKey);
+    if (currentProgramKey === ownProgramKey) {
+        this.rerenderListView();
+    }
+    else {
+        this._retrieveFilteredItems();
+    }
+  }
   render() {
 
     const { uid } = this.state;
@@ -132,10 +137,10 @@ filterByNumber = (arrayToFilter, n) => {
 }
 
 rerenderListView = () => {
-    //let ownExercises = Database.getOwnExercises(this.props.route.params.uid);
+
     firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
         var ownExercises = [];
-        //console.log(snap.val().exercises);
+
         snap.val().exercises.forEach((exercise) => {
             ownExercises.push({
                 ...exercise,
@@ -147,14 +152,14 @@ rerenderListView = () => {
             sequence: ownExercises,
         })
     })
-    //console.log("ownExercises are here:");
-    //console.log(ownExercises);
+
 }
 _displayEnrollButton() {
     enrollProgram = () => {
         Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
         Database.saveExerciseSequence(this.props.route.params.uid, this.state.exercises);
         this.setState({ownProgram: true})
+        AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.route.params.program));
         this.rerenderListView();
        // this.rerenderListView();
     }
@@ -209,7 +214,10 @@ _displayLeaveButton() {
             'Leave Program',
             'You are about to leave your program, are you sure?',
             [   { text: 'Cancel', onPress: () => {console.log('Cancelled')}, style: 'cancel' },
-                { text: 'Leave Program', onPress: () => {this.setState({ownProgram: false}); Database.leaveProgram(this.props.route.params.uid)} }
+                { text: 'Leave Program', onPress: () => {
+                    this._retrieveFilteredItems();
+                    AsyncStorage.setItem('ownProgramId', '');
+                    Database.leaveProgram(this.props.route.params.uid)} }
             ]
         );
     }

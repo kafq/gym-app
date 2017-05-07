@@ -73,6 +73,7 @@ export default class SettingsScreen extends React.Component {
         programs,
         programsDataSource: this.state.programsDataSource.cloneWithRows(programs)
       });
+      AsyncStorage.setItem('programs', JSON.stringify(programs))
     });
   }
 

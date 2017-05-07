@@ -81,9 +81,10 @@ renderCard = () => {
 retrieveUserId() {
   //let that = this;
       let renderAction = setInterval(() => {
-        if ( firebase.auth().currentUser.uid !== null ) {
+        if ( firebase.auth().currentUser !== null ) {
             clearInterval(renderAction);
-            let uid = firebase.auth().currentUser.uid;
+            let user = firebase.auth().currentUser;
+            let uid = user.uid;
             this.setState({uid});
             let path = "/user/" + uid + "/ownProgram";
             firebase.database().ref(path).on('value', (snap) => {
@@ -93,9 +94,7 @@ retrieveUserId() {
                 this.setState({ownProgram: snap.val()});
                 console.log(this.state);
                 return true;
-                actionCard = (
-                  <Text>OH TIJ BOH TI MOI</Text>
-                )
+                
               }
               else {
                 console.log('No program here')
@@ -106,7 +105,7 @@ retrieveUserId() {
         } else {
           console.log('Wait for it');
         }
-      }, 700);
+      }, 200);
 
 }
   render() {

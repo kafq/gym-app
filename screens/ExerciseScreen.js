@@ -60,12 +60,18 @@ export default class ExerciseScreen extends React.Component {
        Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
        let index = 0;
        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-       this.props.navigator.replace('exercise', {
-         exercise: this.props.route.params.sequence[index],
-         insideWorkout: true,
-         sequence: this.props.route.params.sequence
-       });
+       if (index >= this.props.route.params.sequence.length) {
+          this.props.navigator.push('finishWorkout');
+       }
+       else {
+          this.props.navigator.replace('exercise', {
+            exercise: this.props.route.params.sequence[index],
+            insideWorkout: true,
+            sequence: this.props.route.params.sequence
+          });
+       }
      }
+     
      if (this.props.route.params.insideWorkout) {
        return(
          <TouchableOpacity

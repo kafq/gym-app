@@ -17,7 +17,7 @@ class ListItem extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.imageLink}.png`);
     storageRef.getDownloadURL().then((url) => {
       this.setState({
