@@ -7,7 +7,8 @@ export default class FinishWorkoutScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-        ownProgram: ''
+        ownProgram: {},
+        exercises: {}
     }
   }
   static route = {
@@ -18,19 +19,23 @@ export default class FinishWorkoutScreen extends React.Component {
     },
   };
 
-  finishWorkout() {
+ async finishWorkout() {
       
-      AsyncStorage.getItem("ownProgram").then((json) => {
-      try {
-        const ownProgram = JSON.parse(json);
-        this.setState({ownProgram})
-      } catch(e) {
-
-      }
-    })
+      await AsyncStorage.getItem("ownProgram").then((json) => {
+        try {
+            const ownProgram = JSON.parse(json);
+            this.setState({ownProgram})
+        } catch(e) {
+            console.log(e)
+        }
+      })
+      console.log('Below is own program: ' + this.state.ownProgram)
+      console.log(this.state.ownProgram);
+      Database.emptyWorkout();
       Database.finishWorkout();
       this.props.navigator.push('programDashboard', {
-          program: this.state.ownProgram
+          program: this.state.ownProgram,
+          exercises: [{id: 1}, {id: 2}]
       })
   }
   render() {

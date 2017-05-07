@@ -1,4 +1,5 @@
 import * as firebase from "firebase";
+import moment from 'moment';
 
 class Database {
 
@@ -113,6 +114,22 @@ class Database {
     }
     static completeExercise(){
         
+    }
+
+    static finishWorkout(){
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/statistics';
+        firebase.database().ref(path).update({
+            lastWorkoutDate: moment().format('MM-DD-YY')
+        });
+    }
+
+    static emptyWorkout(){
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/ownProgram/exerciseSequence';
+        firebase.database().ref(path).update({
+            currentExerciseIndex: 0
+        })
     }
     static addExerciseStats(exerciseId, weight, metric, ownExercise) {
         let uid = firebase.auth().currentUser.uid;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
 import * as firebase from "firebase";
 import { ExpoConfigView } from '@expo/samples';
 const ActionButton = require('../components/ActionButton');
@@ -24,7 +24,7 @@ export default class SettingsScreen extends React.Component {
         try {
 
             await firebase.auth().signOut();
-
+            await AsyncStorage.setItem('ownProgram', '');
             this.props.navigator.push('login')
 
         } catch (error) {
