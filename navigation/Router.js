@@ -14,6 +14,7 @@ import EditProgramDashboard from '../screens/EditProgramDashboard';
 import QuestionsScreen from '../screens/QuestionsScreen';
 import ReplaceExerciseScreen from '../screens/ReplaceExerciseScreen';
 import FinishWorkoutScreen from '../screens/FinishWorkoutScreen';
+import XDayExercisesScreen from '../screens/XDayExercisesScreen';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -30,4 +31,5 @@ export default createRouter(() => ({
   questions: () => QuestionsScreen,
   replaceExercise: () => ReplaceExerciseScreen,
   finishWorkout: () => FinishWorkoutScreen,
+  XDayExercises: () => XDayExercisesScreen,
 }));

@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import Divider from '../components/Divider';
 import ListItem from '../components/ListItem';
+import WorkoutExercises from '../components/WorkoutExercises'
 import Database from '../api/database';
 import * as firebase from 'firebase';
 export default class ExerciseScreen extends React.Component {
@@ -14,6 +15,7 @@ export default class ExerciseScreen extends React.Component {
           programName: 'attempt1',
           ownProgram: false,
           sequence: [],
+          sequence2: ''
       }
   }
   static route = {
@@ -71,7 +73,9 @@ export default class ExerciseScreen extends React.Component {
         {this._displayEnrollButton()}
         {this._displayLeaveButton()}
         <Text>Program name: {this.state.programName}</Text>
+        <Text>{this.props.route.params.program.days}</Text>
         <Text style={styles.textBlackTitle}>Workouts</Text>
+        {this.displayWorkoutDays()}
         <Divider/>
             {/*<Text>First day exercises</Text>
             <Text>{this.props.route.params.program.days}</Text>
@@ -90,29 +94,38 @@ export default class ExerciseScreen extends React.Component {
     );
   }
 
-_retrieveFilteredItems(filter, exercises) {
+displayWorkoutDays() {
+    let workoutExercises = [];
+        for (i = 1; i <= this.props.route.params.program.days; i++) {
+        let day = 'day' + i;
+        workoutExercises.push(
+            <WorkoutExercises key={i} dayNumber={i} exercises={this.state.sequence2[day]} program={this.props.route.params.program}></WorkoutExercises>
+        );
+    } 
+    return (workoutExercises)
+}
 
-    let days = 1;
-    console.log('Number of days in program: ' + days);
+_retrieveFilteredItems(filter, exercises) {
+    let exercisesSequence = {};
     let newArr = this.props.route.params.exercises.sort(this.compare('muscles'));
-    //for ( i=1; i<=days; i++ ) {
-        let i = 1;
-        console.log('Counter is: ' + i);
+    for ( i=1; i<=this.props.route.params.program.days; i++ ) {
         let day = 'day' + i;
         let ref = this.props.route.params.program[day];
-        console.log('Ref is: ' + ref)
-
-        const filteredByDay = this.props.route.params.exercises.filter((item) => {
+        let filteredByDay = this.props.route.params.exercises.filter((item) => {
             return ref.split(', ').includes(item.muscles);
         })
 
-        const filteredByNumber = this.filterByNumber(filteredByDay, 2);
-        
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(filteredByNumber),
-            exercises: filteredByNumber,
+        let filteredByNumber = this.filterByNumber(filteredByDay, 2);
+        exercisesSequence[day] = filteredByNumber;
+    }
+    this.setState({
+            //dataSource: this.state.dataSource.cloneWithRows(filteredByNumber),
+            //exercises: filteredByNumber,
+            sequence2: exercisesSequence
         })
-  //  }
+  console.log('ALL EXERCISES BY DAYS');
+  console.log(exercisesSequence);
+  
 }
 
 filterByNumber = (arrayToFilter, n) => {
@@ -121,43 +134,52 @@ filterByNumber = (arrayToFilter, n) => {
   let filtered = [];
   arrayToFilter.forEach((item) => {
     if ((item.muscles !== muscleToCompareWith)) {
-      
       counter = 1;
       muscleToCompareWith = item.muscles;
       filtered.push(item);
-      
     }
     else if ((item.muscles === muscleToCompareWith) && (counter < n)) {
       filtered.push(item);
       counter++;
     }
   });
-  console.log(filtered);
   return filtered;
 }
 
 rerenderListView = () => {
 
-    firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
-        var ownExercises = [];
-
-        snap.val().exercises.forEach((exercise) => {
+    var ownExercises = [];
+    for (i = 1; i<=this.props.route.params.program.days; i++) {
+        let day = 'day' + i;
+        this.state.sequence2[day].forEach((exercise) => {
             ownExercises.push({
                 ...exercise,
                 own: true
-            });
-        });
-        this.setState({
+            })
+        })
+    }
+
+    this.setState({
             dataSource: this.state.dataSource.cloneWithRows(ownExercises),
             sequence: ownExercises,
         })
-    })
+    // firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
+    //     var ownExercises = [];
+
+    //     snap.val().exercises.forEach((exercise) => {
+    //         ownExercises.push({
+    //             ...exercise,
+    //             own: true
+    //         });
+    //     });
+        
+    // })
 
 }
 _displayEnrollButton() {
     enrollProgram = () => {
         Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
-        Database.saveExerciseSequence(this.props.route.params.uid, this.state.exercises);
+        Database.saveExerciseSequence(this.props.route.params.uid, this.state.sequence2);
         this.setState({ownProgram: true})
         AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.route.params.program));
         this.rerenderListView();
@@ -169,7 +191,7 @@ _displayEnrollButton() {
       uid: this.props.route.params.uid
     })
 }
-let that = this;
+
 continueProgram = () => {
         console.log('Sequence below');
         console.log(this.state.sequence);
