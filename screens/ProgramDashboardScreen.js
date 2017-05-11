@@ -49,10 +49,12 @@ export default class ExerciseScreen extends React.Component {
     console.log('ownProgramKey is ' + ownProgramKey);
     console.log(currentProgramKey === ownProgramKey);
     if (currentProgramKey === ownProgramKey) {
-        this.rerenderListView();
+        this._retrieveFilteredItems();
+         this.addOwnProperty();
     }
     else {
         this._retrieveFilteredItems();
+       
     }
   }
   render() {
@@ -103,6 +105,32 @@ displayWorkoutDays() {
         );
     } 
     return (workoutExercises)
+}
+
+async addOwnProperty() {
+    let ownExercises = {};
+    let modifiedExercises = [];
+    for (i = 1; i<=this.props.route.params.program.days; i++) {
+        
+        let day = 'day' + i;
+       
+        
+        await this.state.sequence2[day].forEach((exercise) => {
+             modifiedExercises.push({
+            ...exercise,
+            own: true
+            })
+        ownExercises[day] = modifiedExercises;
+
+    })
+    modifiedExercises = [];
+    }
+    console.log(modifiedExercises);
+    console.log('OWN EXERCISES')
+    console.log(ownExercises);
+    this.setState({
+        sequence2: ownExercises
+    })
 }
 
 _retrieveFilteredItems(filter, exercises) {
@@ -162,6 +190,7 @@ rerenderListView = () => {
     this.setState({
             dataSource: this.state.dataSource.cloneWithRows(ownExercises),
             sequence: ownExercises,
+            sequence2: ownExercises,
         })
     // firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
     //     var ownExercises = [];
@@ -198,9 +227,9 @@ continueProgram = () => {
         let index = 1;
         Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
         console.log('Index from database.js is ' + index);
-        console.log('exercise is ' + that.state.sequence[index]);
+        console.log('exercise is ' + this.state.sequence[index]);
         this.props.navigator.push('exercise', {
-            exercise: that.state.sequence[index],
+            exercise: this.state.sequence[index],
             insideWorkout: true,
             sequence: this.state.sequence
         })

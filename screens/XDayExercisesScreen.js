@@ -33,57 +33,7 @@ export default class XDAYExercisesScreen extends Component {
     },
   };
 
-compare = (property) => {
-    return (a, b) => {
-        if (a[property] < b[property]) return -1;
-        if (a[property] > b[property]) return 1;
-        return 0;
-    }
-}
-componentDidMount() {
-  console.log(this.props.route.params.exercises);
-  this._retrieveFilteredItems();
-}
-  _retrieveFilteredItems() {
 
-    let newArr = this.props.route.params.exercises.sort(this.compare('muscles'));
-
-        let day = 'day' + this.props.route.params.dayNumber;
-        let ref = this.props.route.params.program[day];
-        console.log('Ref is: ' + ref)
-
-        const filteredByDay = this.props.route.params.exercises.filter((item) => {
-            return ref.split(', ').includes(item.muscles);
-        })
-
-        const filteredByNumber = this.filterByNumber(filteredByDay, 2);
-        
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises),
-            exercises: filteredByNumber,
-        })
-  //  }
-}
-filterByNumber = (arrayToFilter, n) => {
-  let muscleToCompareWith = 'brain';
-  let counter = 1;
-  let filtered = [];
-  arrayToFilter.forEach((item) => {
-    if ((item.muscles !== muscleToCompareWith)) {
-      
-      counter = 1;
-      muscleToCompareWith = item.muscles;
-      filtered.push(item);
-      
-    }
-    else if ((item.muscles === muscleToCompareWith) && (counter < n)) {
-      filtered.push(item);
-      counter++;
-    }
-  });
-  console.log(filtered);
-  return filtered;
-}
   render() {
     return (
      <ScrollView>
@@ -91,7 +41,7 @@ filterByNumber = (arrayToFilter, n) => {
 
         <Text>{this.props.route.params.dayNumber}</Text>
         <ListView
-                    dataSource={this.state.dataSource}
+                    dataSource={this.state.dataSource.cloneWithRows(this.props.route.params.exercises)}
                     renderRow={this._renderItem.bind(this)}
                     enableEmptySections={true}/>
       </ScrollView>
