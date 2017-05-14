@@ -33,7 +33,11 @@ export default class XDAYExercisesScreen extends Component {
     },
   };
 
-
+async componentDidMount() {
+  await this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises)
+  })
+}
   render() {
     return (
      <ScrollView>
@@ -41,7 +45,7 @@ export default class XDAYExercisesScreen extends Component {
 
         <Text>{this.props.route.params.dayNumber}</Text>
         <ListView
-                    dataSource={this.state.dataSource.cloneWithRows(this.props.route.params.exercises)}
+                    dataSource={this.state.dataSource}
                     renderRow={this._renderItem.bind(this)}
                     enableEmptySections={true}/>
       </ScrollView>

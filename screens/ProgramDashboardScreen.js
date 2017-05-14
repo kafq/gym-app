@@ -38,6 +38,7 @@ export default class ExerciseScreen extends React.Component {
       });
       this.renderExercises();
   }
+
   async renderExercises() {
     let ownProgramKey = '';
     await AsyncStorage.getItem('ownProgram').then( (program) => {
@@ -45,12 +46,9 @@ export default class ExerciseScreen extends React.Component {
         ownProgramKey = ownProgram._key;
     })
     let currentProgramKey = await this.props.route.params.program._key;
-    console.log('current program is ' + currentProgramKey);
-    console.log('ownProgramKey is ' + ownProgramKey);
-    console.log(currentProgramKey === ownProgramKey);
     if (currentProgramKey === ownProgramKey) {
         this._retrieveFilteredItems();
-         this.addOwnProperty();
+         this.setOwnPropertyTo(true);
     }
     else {
         this._retrieveFilteredItems();
@@ -79,25 +77,12 @@ export default class ExerciseScreen extends React.Component {
         <Text style={styles.textBlackTitle}>Workouts</Text>
         {this.displayWorkoutDays()}
         <Divider/>
-            {/*<Text>First day exercises</Text>
-            <Text>{this.props.route.params.program.days}</Text>
-            <ListView
-            dataSource={this.state.dataSource}
-            renderRow={this._renderItem.bind(this)}
-            enableEmptySections={true}
-            style={styles.programsContainer}/>
-            <Divider/>*/}
-            <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderItem.bind(this)}
-                    enableEmptySections={true}
-                    style={styles.programsContainer}/>
       </ScrollView>
     );
   }
 
 displayWorkoutDays() {
-    let workoutExercises = [];
+    let workoutExercises = [<TouchableOpacity onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>];
         for (i = 1; i <= this.props.route.params.program.days; i++) {
         let day = 'day' + i;
         workoutExercises.push(
@@ -107,7 +92,7 @@ displayWorkoutDays() {
     return (workoutExercises)
 }
 
-async addOwnProperty() {
+async setOwnPropertyTo(bool) {
     let ownExercises = {};
     let modifiedExercises = [];
     for (i = 1; i<=this.props.route.params.program.days; i++) {
@@ -118,19 +103,17 @@ async addOwnProperty() {
         await this.state.sequence2[day].forEach((exercise) => {
              modifiedExercises.push({
             ...exercise,
-            own: true
+            own: bool
             })
         ownExercises[day] = modifiedExercises;
 
     })
-    modifiedExercises = [];
+    //modifiedExercises = [];
     }
-    console.log(modifiedExercises);
-    console.log('OWN EXERCISES')
-    console.log(ownExercises);
     this.setState({
         sequence2: ownExercises
     })
+    console.log(this.state.sequence2);
 }
 
 _retrieveFilteredItems(filter, exercises) {
@@ -151,8 +134,6 @@ _retrieveFilteredItems(filter, exercises) {
             //exercises: filteredByNumber,
             sequence2: exercisesSequence
         })
-  console.log('ALL EXERCISES BY DAYS');
-  console.log(exercisesSequence);
   
 }
 
@@ -174,45 +155,12 @@ filterByNumber = (arrayToFilter, n) => {
   return filtered;
 }
 
-rerenderListView = () => {
-
-    var ownExercises = [];
-    for (i = 1; i<=this.props.route.params.program.days; i++) {
-        let day = 'day' + i;
-        this.state.sequence2[day].forEach((exercise) => {
-            ownExercises.push({
-                ...exercise,
-                own: true
-            })
-        })
-    }
-
-    this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(ownExercises),
-            sequence: ownExercises,
-            sequence2: ownExercises,
-        })
-    // firebase.database().ref().child('user').child(this.props.route.params.uid).child('ownProgram').child('exerciseSequence').on('value', (snap)=>{
-    //     var ownExercises = [];
-
-    //     snap.val().exercises.forEach((exercise) => {
-    //         ownExercises.push({
-    //             ...exercise,
-    //             own: true
-    //         });
-    //     });
-        
-    // })
-
-}
 _displayEnrollButton() {
     enrollProgram = () => {
         Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
         Database.saveExerciseSequence(this.props.route.params.uid, this.state.sequence2);
-        this.setState({ownProgram: true})
         AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.route.params.program));
-        this.rerenderListView();
-       // this.rerenderListView();
+        this.setOwnPropertyTo(true);
     }
     goToRoute = () => {
     this.props.navigator.push('editProgramDash', {
@@ -267,6 +215,7 @@ _displayLeaveButton() {
             [   { text: 'Cancel', onPress: () => {console.log('Cancelled')}, style: 'cancel' },
                 { text: 'Leave Program', onPress: () => {
                     this._retrieveFilteredItems();
+                    this.setOwnPropertyTo(false);
                     AsyncStorage.setItem('ownProgramId', '');
                     Database.leaveProgram(this.props.route.params.uid)} }
             ]

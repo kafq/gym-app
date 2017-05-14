@@ -10,6 +10,8 @@ class WorkoutExercises extends Component {
    
 }
 goToAllExercises() {
+    console.log('EXERCISES PUSHED TO THE SCREEN');
+    console.log(this.props.exercises)
     this.props.navigator.push('XDayExercises', {
         dayNumber: this.props.dayNumber,
         exercises: this.props.exercises,
