@@ -92,28 +92,20 @@ displayWorkoutDays() {
     return (workoutExercises)
 }
 
-async setOwnPropertyTo(bool) {
-    let ownExercises = {};
-    let modifiedExercises = [];
-    for (i = 1; i<=this.props.route.params.program.days; i++) {
-        
-        let day = 'day' + i;
-       
-        
-        await this.state.sequence2[day].forEach((exercise) => {
-             modifiedExercises.push({
-            ...exercise,
-            own: bool
+setOwnPropertyTo(bool) {
+    revertExercise = () => {
+        Object.keys(this.state.sequence2).forEach((day) => {
+            console.log(day);
+            this.state.sequence2[day].forEach((exercise) => {
+                console.log('Exercise is: ');
+                console.log(exercise);
+                exercise.own = bool;
             })
-        ownExercises[day] = modifiedExercises;
+    })
+    
+}
 
-    })
-    //modifiedExercises = [];
-    }
-    this.setState({
-        sequence2: ownExercises
-    })
-    console.log(this.state.sequence2);
+revertExercise();
 }
 
 _retrieveFilteredItems(filter, exercises) {
