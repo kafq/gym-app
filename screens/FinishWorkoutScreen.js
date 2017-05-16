@@ -29,8 +29,6 @@ export default class FinishWorkoutScreen extends React.Component {
             console.log(e)
         }
       })
-      console.log('Below is own program: ' + this.state.ownProgram)
-      console.log(this.state.ownProgram);
       Database.emptyWorkout();
       Database.finishWorkout();
       this.props.navigator.push('programDashboard', {

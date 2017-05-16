@@ -1,8 +1,9 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
+import ProgramBadge from '../components/ProgramBadge';
 import Divider from '../components/Divider';
 import ListItem from '../components/ListItem';
-import WorkoutExercises from '../components/WorkoutExercises'
+import WorkoutExercises from '../components/WorkoutExercises';
 import Database from '../api/database';
 import * as firebase from 'firebase';
 export default class ExerciseScreen extends React.Component {
@@ -52,6 +53,7 @@ export default class ExerciseScreen extends React.Component {
     }
     else {
         this._retrieveFilteredItems();
+        this.setOwnPropertyTo(false);
        
     }
   }
@@ -60,7 +62,7 @@ export default class ExerciseScreen extends React.Component {
     const { uid } = this.state;
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.imageContainer}>
+        {/*<View style={styles.imageContainer}>
             <Image 
                 source={require('../assets/images/program_background.png')}
                 resizeMode={Image.resizeMode.fill}
@@ -68,7 +70,8 @@ export default class ExerciseScreen extends React.Component {
             >
                 <Text style={styles.textWhiteTitle}>{this.props.route.params.program._key}</Text>
             </Image>
-        </View>
+        </View>*/}
+        <ProgramBadge days={this.props.route.params.program.days} style={{flex: 1}}/>
         <Text>You have passed: {this.props.route.params.uid}</Text>
         {this._displayEnrollButton()}
         {this._displayLeaveButton()}
@@ -82,7 +85,7 @@ export default class ExerciseScreen extends React.Component {
   }
 
 displayWorkoutDays() {
-    let workoutExercises = [<TouchableOpacity onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>];
+    let workoutExercises = [<TouchableOpacity key={0} onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>];
         for (i = 1; i <= this.props.route.params.program.days; i++) {
         let day = 'day' + i;
         workoutExercises.push(
@@ -95,10 +98,7 @@ displayWorkoutDays() {
 setOwnPropertyTo(bool) {
     revertExercise = () => {
         Object.keys(this.state.sequence2).forEach((day) => {
-            console.log(day);
             this.state.sequence2[day].forEach((exercise) => {
-                console.log('Exercise is: ');
-                console.log(exercise);
                 exercise.own = bool;
             })
     })
@@ -162,12 +162,8 @@ _displayEnrollButton() {
 }
 
 continueProgram = () => {
-        console.log('Sequence below');
-        console.log(this.state.sequence);
         let index = 1;
         Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-        console.log('Index from database.js is ' + index);
-        console.log('exercise is ' + this.state.sequence[index]);
         this.props.navigator.push('exercise', {
             exercise: this.state.sequence[index],
             insideWorkout: true,

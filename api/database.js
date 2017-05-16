@@ -73,8 +73,8 @@ class Database {
     })
     
     }
-    static enrollIntoProgram(uid, passedProgram) {
-            
+    static enrollIntoProgram(passedProgram) {
+            let uid = firebase.auth().currentUser.uid;
             let path = "/user/" + uid + "/ownProgram";
            
             firebase.database().ref(path).update({

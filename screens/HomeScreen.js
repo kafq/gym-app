@@ -36,8 +36,6 @@ export default class HomeScreen extends Component {
     },
   };
 componentDidMount() {
-    //let user = firebase.auth().currentUser;
-    //console.log(user);
     this.retrieveUserId();
     this.listenForExercises();
 }
@@ -56,7 +54,6 @@ componentDidMount() {
           _key: child.key.slice(2),
         });
       });
-      console.log(exercises);
       AsyncStorage.setItem('exercises', JSON.stringify(exercises));
     });
     
@@ -89,21 +86,17 @@ retrieveUserId() {
             let path = "/user/" + uid + "/ownProgram";
             firebase.database().ref(path).on('value', (snap) => {
               if (snap.val().hasProgram) { 
-                console.log('Program found');
                 this.setState({hasProgram: true});
                 this.setState({ownProgram: snap.val()});
-                console.log(this.state);
                 return true;
                 
               }
               else {
-                console.log('No program here')
                 this.setState({hasProgram: false})
-                return false};
+                return false
+              };
             }, (e) => {console.log(e)})
             return firebase.auth().currentUser.uid;
-        } else {
-          console.log('Wait for it');
         }
       }, 200);
 

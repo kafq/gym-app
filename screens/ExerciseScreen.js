@@ -48,7 +48,6 @@ export default class ExerciseScreen extends React.Component {
     this.setState({modalVisible: visible});
   }
   sendData() {
-    console.log(this.state.weight + ' ' + this.state.metric);
     Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric);
   }
    
