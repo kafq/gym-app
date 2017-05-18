@@ -1,16 +1,43 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from "react-native";
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 import Layout from '../constants/Layout';
+import ListItem from '../components/ListItem';
 import BigTag from '../components/BigTag';
 import { Font } from 'expo';
+import Database from '../api/database';
 
+@withNavigation
 export default class ProgramBadge extends Component {
-
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true
+        }
+    }
+componentDidMount() {
+    this.loadProps().then((sequence) => {
+        console.log(sequence);
+        this.setState({
+            isLoading: false
+        })
+    })
+}
+async loadProps() {
+    let sequence = await this.props.sequence;
+    return sequence;
+}
   render() {
+      if (this.state.isLoading) {
+          return (
+              <View><Text>Is loading...</Text>
+              </View>
+          )
+      }
+ 
     return (
+        <View>
         <View style={styles.imageContainer}>
             <Image
               source={require('../assets/images/program_dashboard.png')}
@@ -21,12 +48,89 @@ export default class ProgramBadge extends Component {
                         <BigTag title={'days per week'} content={this.props.days}/>
                         <BigTag title={'days overall'} content={'30'}/>
                     </View>
-                    <TouchableOpacity style={styles.actionButton} onPress={() => {console.log('clicked')}}><Text style={styles.buttonTitle}>Continue</Text></TouchableOpacity>
+                    {this._displayEnrollButton()}
                 </View>
             </Image>
         </View>
+        {this.showContinueExercise()}
+        </View>
     )
   }
+  showContinueExercise() {
+    continueProgram = async () => {
+         let index = '';
+        let day = '';
+        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+        Database.getCurrentWorkoutDay( (currentDay) => {day = currentDay});
+        console.log(index + day);
+        console.log('Object is: ' + this.props.sequence[day][index]);
+        this.props.navigator.push('exercise', {
+            exercise: this.props.sequence[day][index],
+            insideWorkout: true,
+            sequence: this.props.sequence
+        })
+    }
+
+          switch (this.props.programName) {
+         
+          case this.props.program._key:
+    
+              return (
+                  <View>
+                  <ListItem onPress={() => {continueProgram()}} item = {this.props.sequence.day1[0]}/>
+                  </View>
+              )
+          default: return( <View/> )
+      }
+      
+  }
+
+_displayEnrollButton() {
+    enrollProgram = () => {
+        Database.enrollIntoProgram(this.props.program);
+        Database.saveExerciseSequence(this.props.sequence);
+        AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.program));
+        this.props.handleClick(true);
+    }
+    goToRoute = () => {
+    this.props.navigator.push('editProgramDash', {
+      program: this.props.program,
+      uid: this.props.uid
+    })
+}
+
+continueProgram = () => {
+        let index = 1;
+        let day = 'day1';
+        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+        this.props.navigator.push('exercise', {
+            exercise: this.props.sequence[day][index],
+            insideWorkout: true,
+            sequence: this.props.sequence[day]
+        })
+    }
+    switch (this.props.programName) {
+        case '':
+            return(
+
+                    <TouchableOpacity style={styles.actionButton} onPress={enrollProgram}><Text style={styles.buttonTitle} >ENROLL RIGHT NOW</Text></TouchableOpacity>
+            );
+        case this.props.program._key:
+            return(
+                    <View>
+                    <TouchableOpacity style={styles.actionButton} onPress={goToRoute}><Text style={styles.buttonTitle}>EDIT THE PROGRAM</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.actionButton} onPress={continueProgram}><Text style={styles.buttonTitle}>CONTINUE THE PROGRAM</Text></TouchableOpacity>
+                    </View>
+
+            );
+        default: 
+            return(
+                <View>
+                    <TouchableOpacity style={styles.actionButton} onPress={() => {console.log('clicked')}}><Text style={styles.buttonTitle}>DEFAULT CASE</Text></TouchableOpacity>
+                </View>
+            );
+    }
+}
   
 }
 
@@ -51,7 +155,7 @@ imageContainer: {
     fontSize: 16,
   },
   actionButton: {
-      width: Layout.window.width * 0.5,
+      width: Layout.window.width * 0.5 + 50,
       borderRadius: 100,
       borderColor: '#FFFFFF',
       borderWidth: 1,

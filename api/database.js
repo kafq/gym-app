@@ -36,8 +36,8 @@ class Database {
          
     }
     
-    static saveExerciseSequence(uid, exercises) {
-            
+    static saveExerciseSequence(exercises) {
+            let uid = firebase.auth().currentUser.uid;
             let path = "/user/" + uid + "/ownProgram/exerciseSequence";
            
             firebase.database().ref(path).set({
@@ -112,8 +112,15 @@ class Database {
             callback(index);
         })
     }
-    static completeExercise(){
-        
+    static getCurrentWorkoutDay(callback) {
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/ownProgram/exerciseSequence/';
+        firebase.database().ref(path).on('value', (snap) => {
+
+            let day = snap.val().currentWorkoutDay;
+
+            callback(day);
+        })
     }
 
     static finishWorkout(){

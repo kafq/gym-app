@@ -116,7 +116,7 @@ export default class ExercisesScreen extends Component {
     })
   }
     return (
-      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={goToRoute}/>
+      <ListItem item={item} videoLink={item.video} onPress={goToRoute}/>
     );
   }
 }

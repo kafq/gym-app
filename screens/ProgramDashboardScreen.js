@@ -71,7 +71,15 @@ export default class ExerciseScreen extends React.Component {
                 <Text style={styles.textWhiteTitle}>{this.props.route.params.program._key}</Text>
             </Image>
         </View>*/}
-        <ProgramBadge days={this.props.route.params.program.days} style={{flex: 1}}/>
+        <ProgramBadge 
+            days={this.props.route.params.program.days}
+            program = {this.props.route.params.program}
+            programName = {this.state.programName}
+            sequence = {this.state.sequence2}
+            uid = {this.props.route.params.uid}
+            handleClick = {this.setOwnPropertyTo.bind(this)}
+            style={{flex: 1}}
+            />
         <Text>You have passed: {this.props.route.params.uid}</Text>
         {this._displayEnrollButton()}
         {this._displayLeaveButton()}
@@ -101,11 +109,9 @@ setOwnPropertyTo(bool) {
             this.state.sequence2[day].forEach((exercise) => {
                 exercise.own = bool;
             })
-    })
-    
-}
-
-revertExercise();
+        })
+    }
+    revertExercise();
 }
 
 _retrieveFilteredItems(filter, exercises) {
@@ -147,9 +153,14 @@ filterByNumber = (arrayToFilter, n) => {
   return filtered;
 }
 
+handleClick(bool) {
+    console.log('click handled = ' + bool);
+
+}
+
 _displayEnrollButton() {
     enrollProgram = () => {
-        Database.enrollIntoProgram(this.props.route.params.uid, this.props.route.params.program);
+        Database.enrollIntoProgram(this.props.route.params.program);
         Database.saveExerciseSequence(this.props.route.params.uid, this.state.sequence2);
         AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.route.params.program));
         this.setOwnPropertyTo(true);
@@ -163,11 +174,14 @@ _displayEnrollButton() {
 
 continueProgram = () => {
         let index = 1;
+        let day = 'day1'
         Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+        console.log(index);
+        console.log(this.state.sequence2[day][index]);
         this.props.navigator.push('exercise', {
-            exercise: this.state.sequence[index],
+            exercise: this.state.sequence2[day][index],
             insideWorkout: true,
-            sequence: this.state.sequence
+            sequence: this.state.sequence2
         })
     }
     switch (this.state.programName) {
