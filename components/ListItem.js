@@ -16,7 +16,9 @@ class ListItem extends Component {
       videoLink: 'not empty string',
     }
   }
-
+  componentWillMount() {
+    console.log('Somehow called');
+  }
   componentDidMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.item.photo}.png`);
     storageRef.getDownloadURL().then((url) => {
@@ -44,7 +46,7 @@ class ListItem extends Component {
             <Image source={{uri: this.state.uriLink || require('../assets/images/CTA.png')}} style={{flex: 1, resizeMode: 'cover'}}></Image>
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.title}>{this.props.item.name}</Text>
+            <Text style={styles.title}>{this.props.item.name || ''}</Text>
             <Text>{this.props.item.muscles}</Text>
             <Text>{this.props.item.type}</Text>
             {this.displayAlternativeButton()}

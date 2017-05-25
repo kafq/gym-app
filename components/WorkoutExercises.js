@@ -5,8 +5,13 @@ import Layout from '../constants/Layout'
 @withNavigation
 class WorkoutExercises extends Component {
   constructor(props) {
-    super(props);  
+    super(props);
+    this.state = {
+        isLoading: true,
+        numberOfExercises: ''
+    } 
   }
+
 goToAllExercises() {
     this.props.navigator.push('XDayExercises', {
         dayNumber: this.props.dayNumber,
@@ -26,13 +31,13 @@ getDayOrder() {
 }
     
 render() {
-    const {dayNumber, exercises, program, exercisesNumber} = this.props;
+    const {dayNumber, exercises, program, numberOfExercises} = this.props;
     return (
         <View style={styles.dayExercisesContainer}>
             <TouchableOpacity onPress={() => {this.goToAllExercises()}}>
                 <View>
                     <Text style={styles.title}>{this.getDayOrder()} day</Text>
-                    <Text style={styles.subtitle}>{this.props.exercisesNumber} exercises</Text>
+                    <Text style={styles.subtitle}>{this.props.numberOfExercises} exercises</Text>
                 </View>
                     </TouchableOpacity>
         </View> 

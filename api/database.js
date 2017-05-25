@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
 import moment from 'moment';
+var _ = require('lodash');
 
 class Database {
 
@@ -42,7 +43,8 @@ class Database {
            
             firebase.database().ref(path).set({
                 exercises,
-                currentExerciseIndex: 0
+                currentExerciseIndex: 0,
+                currentWorkoutDay: 'day1'
             })
     }
 
@@ -124,18 +126,53 @@ class Database {
     }
 
     static finishWorkout(){
+        let dayNumber;
         let uid = firebase.auth().currentUser.uid;
         let path = '/user/' + uid + '/statistics';
         firebase.database().ref(path).update({
             lastWorkoutDate: moment().format('MM-DD-YY')
         });
+        this.getCurrentWorkoutDay((day) => {dayNumber = day})
+        this.emptyWorkout(dayNumber);
+        
+    }
+    static pushWorkoutLog(log){
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/workoutLogs/' + Date.now();
+        firebase.database().ref(path).set({
+            ...log,
+            workoutCompleted: moment().format('MM-DD-YY'),
+            amountOfExercisesCompleted: log.length,
+        })
+    }
+    static rateWorkout(rate){
+        let uid = firebase.auth().currentUser.uid;
+        let path = '/user/' + uid + '/details/';
+        firebase.database().ref(path).once('value').then( (snap) => {
+            console.log(snap.val());
+            let currentRate = snap.val().difficultyRate;
+            let newRate = currentRate + rate;
+            if (newRate >= 5) {
+                firebase.database().ref(path).update({
+                    level: snap.val().level + 1,
+                    difficultyRate: 0
+                })
+            }
+            else {
+                firebase.database().ref(path).update({
+                    difficultyRate: newRate
+                })
+            }
+        })
+
     }
 
-    static emptyWorkout(){
+    static emptyWorkout(dayNumber){
         let uid = firebase.auth().currentUser.uid;
         let path = '/user/' + uid + '/ownProgram/exerciseSequence';
         firebase.database().ref(path).update({
-            currentExerciseIndex: 0
+            currentExerciseIndex: 0,
+            currentWorkoutDay: dayNumber + 1
         })
     }
     static addExerciseStats(exerciseId, weight, metric, ownExercise) {

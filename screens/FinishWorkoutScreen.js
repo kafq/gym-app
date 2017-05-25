@@ -8,7 +8,7 @@ export default class FinishWorkoutScreen extends React.Component {
     super(props);
     this.state = {
         ownProgram: {},
-        exercises: {}
+        exercises: {},
     }
   }
   static route = {
@@ -18,7 +18,6 @@ export default class FinishWorkoutScreen extends React.Component {
       }
     },
   };
-
  async finishWorkout() {
       
       await AsyncStorage.getItem("ownProgram").then((json) => {
@@ -29,18 +28,24 @@ export default class FinishWorkoutScreen extends React.Component {
             console.log(e)
         }
       })
-      Database.emptyWorkout();
-      Database.finishWorkout();
-      this.props.navigator.push('programDashboard', {
-          program: this.state.ownProgram,
-          exercises: [{id: 1}, {id: 2}]
-      })
+      //Database.finishWorkout();
+      this.props.navigator.pop(2);
+  }
+  calculateWorkoutTime(){
+    let workoutTime = (this.props.route.params.workoutFinished - this.props.route.params.workoutStarted)/60/60;
+    console.log('Time is ' + workoutTime);
+    return workoutTime;
   }
   render() {
     return (
       <View>
         <Text>Workout is finished</Text>
         <TouchableOpacity onPress={() => {this.finishWorkout()}}><Text>Finish the Workout</Text></TouchableOpacity>
+        <Text>Please, rate workout difficulty, so that we make it more suitable for you</Text>
+        <Text>{this.calculateWorkoutTime()}</Text>
+        <TouchableOpacity onPress={() => {console.log(1); Database.rateWorkout(1)}}><Text>Bad</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {console.log(2); Database.rateWorkout(2)}}><Text>Fine</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {console.log(3); Database.rateWorkout(3)}}><Text>Very nice</Text></TouchableOpacity>
       </View>
       
     );

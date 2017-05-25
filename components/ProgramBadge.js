@@ -16,18 +16,17 @@ export default class ProgramBadge extends Component {
             isLoading: true
         }
     }
-componentDidMount() {
-    this.loadProps().then((sequence) => {
-        console.log(sequence);
-        this.setState({
-            isLoading: false
+    componentDidMount() {
+        this.loadProps().then((sequence) => {
+            this.setState({
+                isLoading: false
+            })
         })
-    })
-}
-async loadProps() {
-    let sequence = await this.props.sequence;
-    return sequence;
-}
+    }
+    async loadProps() {
+        let sequence = await this.props.sequence;
+        return sequence;
+    }
   render() {
       if (this.state.isLoading) {
           return (
@@ -57,31 +56,28 @@ async loadProps() {
     )
   }
   showContinueExercise() {
-    continueProgram = async () => {
-         let index = '';
-        let day = '';
-        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-        Database.getCurrentWorkoutDay( (currentDay) => {day = currentDay});
-        console.log(index + day);
-        console.log('Object is: ' + this.props.sequence[day][index]);
-        this.props.navigator.push('exercise', {
-            exercise: this.props.sequence[day][index],
-            insideWorkout: true,
-            sequence: this.props.sequence
-        })
+   
+    let index = 1;
+    let dayNumber = '';
+    let day = '';
+    Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+    Database.getCurrentWorkoutDay( (currentDay) => { dayNumber = currentDay});
+    day = 'day' + dayNumber;
+    continueProgram = () => {
+         this.props.handleContinueProgram();
     }
 
-          switch (this.props.programName) {
-         
-          case this.props.program._key:
-    
-              return (
-                  <View>
-                  <ListItem onPress={() => {continueProgram()}} item = {this.props.sequence.day1[0]}/>
-                  </View>
-              )
-          default: return( <View/> )
-      }
+    switch (this.props.programName) { 
+        case this.props.program._key:
+
+            return (
+                <View>
+                    <TouchableOpacity onPress={() => {console.log(this.props.sequence[day][index])}}><Text>PRESS</Text></TouchableOpacity>
+                    <ListItem onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]}/>
+                </View>
+            )
+        default: return( <View/> )
+    }
       
   }
 
@@ -90,43 +86,35 @@ _displayEnrollButton() {
         Database.enrollIntoProgram(this.props.program);
         Database.saveExerciseSequence(this.props.sequence);
         AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.program));
+        AsyncStorage.setItem('logs', []);
         this.props.handleClick(true);
     }
     goToRoute = () => {
-    this.props.navigator.push('editProgramDash', {
-      program: this.props.program,
-      uid: this.props.uid
-    })
-}
-
-continueProgram = () => {
-        let index = 1;
-        let day = 'day1';
-        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-        this.props.navigator.push('exercise', {
-            exercise: this.props.sequence[day][index],
-            insideWorkout: true,
-            sequence: this.props.sequence[day]
+        this.props.navigator.push('editProgramDash', {
+        program: this.props.program,
+        uid: this.props.uid
         })
+    }
+    continueProgram = () => {
+        this.props.handleContinueProgram();
     }
     switch (this.props.programName) {
         case '':
             return(
-
-                    <TouchableOpacity style={styles.actionButton} onPress={enrollProgram}><Text style={styles.buttonTitle} >ENROLL RIGHT NOW</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.actionButton} onPress={enrollProgram}>
+                        <Text style={styles.buttonTitle} >ENROLL RIGHT NOW</Text>
+                    </TouchableOpacity>
             );
         case this.props.program._key:
             return(
-                    <View>
-                    <TouchableOpacity style={styles.actionButton} onPress={goToRoute}><Text style={styles.buttonTitle}>EDIT THE PROGRAM</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.actionButton} onPress={continueProgram}><Text style={styles.buttonTitle}>CONTINUE THE PROGRAM</Text></TouchableOpacity>
-                    </View>
-
+                    <TouchableOpacity style={styles.actionButton} onPress={goToRoute}>
+                        <Text style={styles.buttonTitle}>EDIT THE PROGRAM</Text>
+                    </TouchableOpacity>
             );
         default: 
             return(
                 <View>
-                    <TouchableOpacity style={styles.actionButton} onPress={() => {console.log('clicked')}}><Text style={styles.buttonTitle}>DEFAULT CASE</Text></TouchableOpacity>
+                    {/*<TouchableOpacity style={styles.actionButton} onPress={() => {console.log('clicked')}}><Text style={styles.buttonTitle}>DEFAULT CASE</Text></TouchableOpacity>*/}
                 </View>
             );
     }

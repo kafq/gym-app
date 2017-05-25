@@ -16,7 +16,9 @@ export default class ExerciseScreen extends React.Component {
           programName: 'attempt1',
           ownProgram: false,
           sequence: [],
-          sequence2: ''
+          sequence2: '',
+          isLoading: true,
+          logs: []
       }
   }
   static route = {
@@ -26,7 +28,13 @@ export default class ExerciseScreen extends React.Component {
       }
     },
   };
-
+  componentWillMount() {
+      AsyncStorage.getItem('logs').then(json => {
+          this.setState({
+              logs: JSON.parse(json) || []
+          })
+      })
+  }
   componentDidMount() {
       let uid = this.props.route.params.uid;
       Database.getUserProgram(uid, (programName) => {
@@ -38,6 +46,11 @@ export default class ExerciseScreen extends React.Component {
           dataSource: this.state.dataSource.cloneWithRows(this.props.route.params.exercises),
       });
       this.renderExercises();
+      let timeout = setTimeout( ()=> {
+        this.setState({
+            isLoading: false
+        })
+      }, 1000)
   }
 
   async renderExercises() {
@@ -78,10 +91,10 @@ export default class ExerciseScreen extends React.Component {
             sequence = {this.state.sequence2}
             uid = {this.props.route.params.uid}
             handleClick = {this.setOwnPropertyTo.bind(this)}
+            handleContinueProgram = {this.handleContinue.bind(this)}
             style={{flex: 1}}
             />
         <Text>You have passed: {this.props.route.params.uid}</Text>
-        {this._displayEnrollButton()}
         {this._displayLeaveButton()}
         <Text>Program name: {this.state.programName}</Text>
         <Text>{this.props.route.params.program.days}</Text>
@@ -93,15 +106,29 @@ export default class ExerciseScreen extends React.Component {
   }
 
 displayWorkoutDays() {
-    let workoutExercises = [<TouchableOpacity key={0} onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>];
-        for (i = 1; i <= this.props.route.params.program.days; i++) {
+    if (this.state.isLoading) {
+        return (<View/>)
+    }
+    let workoutExercises = [
+        <TouchableOpacity key={0} onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>
+    ];
+
+    for (i = 1; i <= this.props.route.params.program.days; i++) {
         let day = 'day' + i;
+        let length = this.state.sequence2[day].length;
         workoutExercises.push(
-            <WorkoutExercises key={i} dayNumber={i} exercises={this.state.sequence2[day]} program={this.props.route.params.program}></WorkoutExercises>
+            <WorkoutExercises 
+                key={i} 
+                dayNumber={i}
+                numberOfExercises={length}
+                exercises={this.state.sequence2[day]}
+                program={this.props.route.params.program}/>
         );
-    } 
+    }
+    
     return (workoutExercises)
 }
+
 
 setOwnPropertyTo(bool) {
     revertExercise = () => {
@@ -124,7 +151,7 @@ _retrieveFilteredItems(filter, exercises) {
             return ref.split(', ').includes(item.muscles);
         })
 
-        let filteredByNumber = this.filterByNumber(filteredByDay, 2);
+        let filteredByNumber = this.filterByNumber(filteredByDay, 4);
         exercisesSequence[day] = filteredByNumber;
     }
     this.setState({
@@ -154,59 +181,21 @@ filterByNumber = (arrayToFilter, n) => {
 }
 
 handleClick(bool) {
-    console.log('click handled = ' + bool);
-
+    this.setOwnPropertyTo(bool);
 }
 
-_displayEnrollButton() {
-    enrollProgram = () => {
-        Database.enrollIntoProgram(this.props.route.params.program);
-        Database.saveExerciseSequence(this.props.route.params.uid, this.state.sequence2);
-        AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.route.params.program));
-        this.setOwnPropertyTo(true);
-    }
-    goToRoute = () => {
-    this.props.navigator.push('editProgramDash', {
-      program: this.props.route.params.program,
-      uid: this.props.route.params.uid
-    })
-}
-
-continueProgram = () => {
-        let index = 1;
-        let day = 'day1'
+handleContinue() {
+        let index, day, dayNumber;
         Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-        console.log(index);
-        console.log(this.state.sequence2[day][index]);
+        Database.getCurrentWorkoutDay( (currentDay) => { dayNumber = currentDay});
+        day = 'day' + dayNumber
         this.props.navigator.push('exercise', {
             exercise: this.state.sequence2[day][index],
             insideWorkout: true,
-            sequence: this.state.sequence2
+            sequence: this.state.sequence2[day],
+            logs: this.state.logs,
+            workoutStarted: Date.now()
         })
-    }
-    switch (this.state.programName) {
-        case '':
-            return(
-                <View>
-                    <TouchableOpacity onPress={enrollProgram}><Text>ENROLL RIGHT NOW</Text></TouchableOpacity>
-                </View>
-            );
-        case this.props.route.params.program._key:
-            return(
-                <View>
-                    <Text>THIS YOUR PROGRAM</Text>
-                    <TouchableOpacity onPress={goToRoute}><Text>EDIT THE PROGRAM</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={continueProgram}><Text>CONTINUE THE PROGRAM</Text></TouchableOpacity>
-                </View>
-
-            );
-        default: 
-            return(
-                <View>
-                    <Text>DEFAULT CASE</Text>
-                </View>
-            );
-    }
 }
 
 _displayLeaveButton() {

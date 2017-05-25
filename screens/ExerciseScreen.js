@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Picker } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Picker, AsyncStorage } from 'react-native';
 import Layout from '../constants/Layout';
 import Tag from '../components/Tag';
 import ProgressController from "../components/ProgressController";
@@ -34,7 +34,8 @@ export default class ExerciseScreen extends React.Component {
 
 
   componentWillMount() {
-    //console.log(this.props.route.params.exercise.video);
+    console.log('Workout log below');
+    console.log(this.props.route.params.logs);
     var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video || 'id1'}.mp4`);
     storageRef.getDownloadURL().then((url) => {
       
@@ -61,14 +62,34 @@ export default class ExerciseScreen extends React.Component {
        Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
        let index = 0;
        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+       let oldLog = this.props.route.params.logs
+       oldLog.push({
+         id: this.props.route.params.exercise._key,
+         weight: this.state.weight,
+         metric: this.state.metric,
+       })
+       AsyncStorage.setItem('logs', JSON.stringify(oldLog));
        if (index >= this.props.route.params.sequence.length) {
-          this.props.navigator.push('finishWorkout');
+         console.log('Pushed if');
+         let emptyArr = []
+         AsyncStorage.setItem('logs', JSON.stringify(emptyArr))
+         Database.finishWorkout();
+         Database.pushWorkoutLog(oldLog);
+         this.props.navigator.push('finishWorkout', {
+           logs: oldLog,
+           workoutStarted: this.props.route.params.workoutStarted,
+           workoutFinished: Date.now()
+         });
        }
        else {
+          console.log('Pushed else');
+        
           this.props.navigator.replace('exercise', {
             exercise: this.props.route.params.sequence[index],
             insideWorkout: true,
-            sequence: this.props.route.params.sequence
+            sequence: this.props.route.params.sequence,
+            logs: oldLog,
+            workoutStarted: this.props.route.params.workoutStarted
           });
        }
      }
