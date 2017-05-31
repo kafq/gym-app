@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from "react-native";
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 import Layout from '../constants/Layout';
@@ -23,23 +23,39 @@ class HeroCard extends Component {
             <Text style={styles.paragraph}>this.props.programmname</Text>
             <Button
             buttonStyle={styles.ActionButton}
-            onPress={this.goToRoute('programs')}
-  title='Continue Program' />
-  <Text style={styles.paragraphRight}>Next Exercise:
-            </Text>
-            <TouchableOpacity onPress={this.goToRoute('programDashboard')}><Text style={styles.paragraphRight}> View Program </Text></TouchableOpacity>
-
+            onPress={() => {this.goToProgram('programDashboard')}}
+            title='Continue Program' />
+            <TouchableOpacity style={styles.transparent} onPress={() => {this.goToAllPrograms()}}><Text style={styles.textWhite}>All programs</Text></TouchableOpacity>
   		</View>
 
         </Image>
         </View>
     );
   }
-  goToRoute = (route) => {
-    return () => {
-      this.props.navigator.push(route);
+  goToProgram = async () => {
+    let ownProgram;
+    let exercises;
+    await AsyncStorage.getItem("exercises").then((json) => {
+      try {
+        exercises = JSON.parse(json);
+      } catch(e) {
+
+      }
+    })
+    await AsyncStorage.getItem("ownProgram").then(program => {
+      ownProgram = JSON.parse(program);
+      console.log(ownProgram);
+    })
+   
+      this.props.navigator.push('programDashboard', {
+        program: ownProgram,
+        exercises: exercises,
+      });
     }
+  goToAllPrograms = () => {
+    this.props.navigator.push('programs');
   }
+  
 }
 
 const styles = StyleSheet.create({
@@ -49,6 +65,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0
+ },
+ textWhite: {
+  color: 'transparent'
  },
   HeroContainer: {
     marginHorizontal: 30,
@@ -63,6 +82,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'flex-start',
     fontSize: 24,
+  },
+  transparent: {
+    backgroundColor: 'transparent'
   },
   paragraph: {
     backgroundColor: 'transparent',

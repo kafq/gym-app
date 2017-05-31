@@ -34,8 +34,6 @@ export default class ExerciseScreen extends React.Component {
 
 
   componentWillMount() {
-    console.log('Workout log below');
-    console.log(this.props.route.params.logs);
     var storageRef = firebase.storage().ref(`videos/${this.props.route.params.exercise.video || 'id1'}.mp4`);
     storageRef.getDownloadURL().then((url) => {
       

@@ -16,9 +16,6 @@ class ListItem extends Component {
       videoLink: 'not empty string',
     }
   }
-  componentWillMount() {
-    console.log('Somehow called');
-  }
   componentDidMount() {
     var storageRef = firebase.storage().ref(`exercises/${this.props.item.photo}.png`);
     storageRef.getDownloadURL().then((url) => {

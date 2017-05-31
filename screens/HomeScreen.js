@@ -107,6 +107,7 @@ retrieveUserId() {
      <ScrollView>
        {this.renderCard()}
        <Text style={styles.title}>Most Popular Programs</Text>
+       <TouchableOpacity onPress={() => {this.props.navigator.push('styles')}}><Text>View styles</Text></TouchableOpacity>
        <ProgramsList />
         <View style={styles.bgRectangular} />
         <PromoCard onPress={this.goToSomewhere}/>

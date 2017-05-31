@@ -29,6 +29,7 @@ export default class ExerciseScreen extends React.Component {
     },
   };
   componentWillMount() {
+      console.log('Triggered')
       AsyncStorage.getItem('logs').then(json => {
           this.setState({
               logs: JSON.parse(json) || []
@@ -55,6 +56,7 @@ export default class ExerciseScreen extends React.Component {
 
   async renderExercises() {
     let ownProgramKey = '';
+    console.log('Exercises triggered');
     await AsyncStorage.getItem('ownProgram').then( (program) => {
         const ownProgram = JSON.parse(program); 
         ownProgramKey = ownProgram._key;

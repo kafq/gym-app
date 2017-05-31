@@ -72,7 +72,6 @@ export default class ProgramBadge extends Component {
 
             return (
                 <View>
-                    <TouchableOpacity onPress={() => {console.log(this.props.sequence[day][index])}}><Text>PRESS</Text></TouchableOpacity>
                     <ListItem onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]}/>
                 </View>
             )

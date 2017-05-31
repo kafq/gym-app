@@ -37,9 +37,9 @@ export default class RootNavigation extends React.Component {
         </TabNavigationItem>
 
         <TabNavigationItem
-          id="logedInDash"
+          id="styleTest"
           renderIcon={isSelected => this._renderIcon('calendar-check-o', isSelected)}>
-          <StackNavigation initialRoute="logedInDash" />
+          <StackNavigation initialRoute="styles" />
         </TabNavigationItem>
 
         <TabNavigationItem

@@ -143,6 +143,7 @@ class Database {
             ...log,
             workoutCompleted: moment().format('MM-DD-YY'),
             amountOfExercisesCompleted: log.length,
+            week: moment().week()
         })
     }
     static rateWorkout(rate){
