@@ -36,6 +36,29 @@ class Database {
         });
          
     }
+    static listeningForLogs(currentDate, callback) {
+        let uid = firebase.auth().currentUser.uid;
+        let path = "/user/" + uid + "/workoutLogs";
+        let logsRec = [];
+        let currDate = currentDate;
+        firebase.database().ref(path).on('value', (snap) => {
+            let logs = snap.val();
+            Object.keys(logs).forEach((date) => {
+                // if (logs[item].workoutCompleted === currDate) {
+                //console.log(logs[date])
+                Object.keys(logs[date]).forEach((index) => {
+                    if (index.length <= 3 && logs[date].workoutCompleted === currDate) 
+                    {
+                        logsRec.push(logs[date][index]);
+                    }
+                })
+                //     logsRec.push(logs[item]);  
+                // }
+                console.log(logsRec.push(logs[date]));                
+            })
+            callback(logsRec)
+        }, (e) => {console.log(e)})
+    }
     
     static saveExerciseSequence(exercises) {
             let uid = firebase.auth().currentUser.uid;
