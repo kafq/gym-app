@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, ListView, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import ProgramBadge from '../components/ProgramBadge';
 import Divider from '../components/Divider';
-import ListItem from '../components/ListItem';
+import ExerciseItem from '../components/ExerciseItem';
 import WorkoutExercises from '../components/WorkoutExercises';
 import Database from '../api/database';
 import * as firebase from 'firebase';
@@ -249,7 +249,7 @@ _renderItem(item) {
     })
   }
     return (
-      <ListItem item={item} imageLink={item.photo} onPress={goToRoute} onReplace={goToReplace}/>
+      <ExerciseItem item={item} imageLink={item.photo} onPress={goToRoute} onReplace={goToReplace}/>
     );
   }
 }

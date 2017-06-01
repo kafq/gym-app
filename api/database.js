@@ -164,9 +164,8 @@ class Database {
         let path = '/user/' + uid + '/workoutLogs/' + Date.now();
         firebase.database().ref(path).set({
             ...log,
-            workoutCompleted: moment().format('MM-DD-YY'),
+            workoutCompleted: moment().format(),
             amountOfExercisesCompleted: log.length,
-            week: moment().week()
         })
     }
     static rateWorkout(rate){

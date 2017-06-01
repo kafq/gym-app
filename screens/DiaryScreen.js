@@ -6,7 +6,7 @@ import CalendarStrip from 'react-native-calendar-strip';
 import moment from 'moment';
 import Database from '../api/database';
 import LogItem from '../components/LogItem';
-import ListItem from '../components/ListItem'
+import ExerciseItem from '../components/ExerciseItem'
 var _ = require('lodash');
 
 export default class DiaryScreen extends React.Component {
@@ -112,7 +112,7 @@ export default class DiaryScreen extends React.Component {
     })
   }
     return (
-      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={goToRoute}/>
+      <ExerciseItem item={item} imageLink={item.photo} videoLink={item.video} onPress={goToRoute}/>
     );
   }
   

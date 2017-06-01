@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from "r
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 import Layout from '../constants/Layout';
-import ListItem from '../components/ListItem';
+import ExerciseItem from '../components/ExerciseItem';
 import BigTag from '../components/BigTag';
 import { Font } from 'expo';
 import Database from '../api/database';
@@ -72,7 +72,7 @@ export default class ProgramBadge extends Component {
 
             return (
                 <View>
-                    <ListItem onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]}/>
+                    <ExerciseItem onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]}/>
                 </View>
             )
         default: return( <View/> )

@@ -3,7 +3,7 @@ import ReactNative from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as firebase from 'firebase';
 import {withNavigation} from '@expo/ex-navigation';
-import ListItem from '../components/ListItem';
+import ExerciseItem from '../components/ExerciseItem';
 import Layout from '../constants/Layout';
 import Tag from '../components/Tag';
 

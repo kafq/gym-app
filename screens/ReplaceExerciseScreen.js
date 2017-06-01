@@ -14,7 +14,7 @@ import * as firebase from 'firebase';
 
 import { MonoText } from '../components/StyledText';
 
-const ListItem = require('../components/ListItem');
+const ExerciseItem = require('../components/ExerciseItem');
 
 export default class ReplaceExerciseScreen extends Component {
 
@@ -59,7 +59,7 @@ export default class ReplaceExerciseScreen extends Component {
       <ScrollView>
       <View>
 
-          <ListItem
+          <ExerciseItem
             item = {this.props.route.params.item}
           />
       </View>
@@ -89,7 +89,7 @@ export default class ReplaceExerciseScreen extends Component {
         this.props.navigator.pop();
     }
     return (
-      <ListItem item={item} imageLink={item.photo} videoLink={item.video} onPress={ () => {replaceExerciseWithAlternative(this.props.route.params.item._key, item)} }/>
+      <ExerciseItem item={item} imageLink={item.photo} videoLink={item.video} onPress={ () => {replaceExerciseWithAlternative(this.props.route.params.item._key, item)} }/>
     );
   }
 }

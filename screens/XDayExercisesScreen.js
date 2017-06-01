@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import Database from '../api/database';
-import ListItem from '../components/ListItem';
+import ExerciseItem from '../components/ExerciseItem';
 
 export default class XDAYExercisesScreen extends Component {
   constructor(props) {
@@ -64,7 +64,7 @@ async componentDidMount() {
       })
     }
     return (
-      <ListItem item={item} imageLink={item.photo} onPress={goToRoute} onReplace={goToReplace}/>
+      <ExerciseItem item={item} imageLink={item.photo} onPress={goToRoute} onReplace={goToReplace}/>
     );
   }
 }

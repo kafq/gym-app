@@ -6,6 +6,7 @@ import ProgressController from "../components/ProgressController";
 import * as firebase from 'firebase';
 import Database from '../api/database';
 import {Components} from 'expo';
+import Common from '../constants/common';
 
 import { NavigationStyles } from '@expo/ex-navigation';
 
@@ -159,83 +160,68 @@ export default class ExerciseScreen extends React.Component {
     return (
       <ScrollView>
          
-         
-         <Modal
-          animationType={'slide'}
-          transparent
-          visible={this.state.modalVisible}
-          onRequestClose={() => {alert("Modal has been closed.")}}
-          >
-          <TouchableWithoutFeedback>
-          <View style={styles.modal}>
-          <View style={styles.modalContainer}>
-            <Text>Hello World!</Text>
-            <View style={styles.pickers}>
+        <View style={styles.videoContainer}>
+          <TouchableWithoutFeedback 
+            onPress={() => {
+              if (this.state.videoRate === 1.0) { 
+                this.setState({videoRate: 0})}
+              else {this.setState({videoRate: 1.0})}
+            }}>
+            <Components.Video
+              ref={videoPlayer => this.videoPlayer = videoPlayer}
+              source={{ uri: this.state.videoLink }}
+              isNetwork = {true}
+              rate={this.state.videoRate}
+              volume={1.0}
+              muted={false}
+              onEnd={this.onVideoEnd.bind(this)}
+                          onLoad={this.onVideoLoad.bind(this)}
+              onProgress={this.onProgress.bind(this)}
+              resizeMode="cover"
+              repeat
+              useNativeControls
+              style={{width: Layout.window.width, height: Layout.window.width * 0.56}}
+            />
+          </TouchableWithoutFeedback>
+
+        </View>
+
+        <View style={[Common.container, Common.sectionBorder]}>
+          <Text style={Common.darkTitleH1}>{this.props.route.params.exercise.name}</Text>
+          <View style = {Common.inlineContainer}>
+            <Tag
+              title={'muscle group'}
+              content={this.props.route.params.exercise.muscles}
+              color={'#000'}/>
+            <Tag 
+              title={'exercise type'}
+              content={this.props.route.params.exercise.type}
+              color={'#000'}/>
+          </View>
+        </View>
+        <View style={Common.inlineContainer}>
               <Picker
-                style={{width:150}}
+                style={{flex: 1}}
                 selectedValue={this.state.weight}
                 onValueChange={(number) => this.setState({weight: number})}>
-                  <Picker.Item style={{fontSize: 14}} label="50" value="50" />
-                  <Picker.Item style={{fontSize: 14}} label="60" value="60" />
-                  <Picker.Item style={{fontSize: 14}} label="70" value="70" />
-                  <Picker.Item style={{fontSize: 14}} label="80" value="80" />
-                  <Picker.Item style={{fontSize: 14}} label="90" value="90" />
-                  <Picker.Item style={{fontSize: 14}} label="100" value="100" />
+                  <Picker.Item style={{fontSize: 12}} label="50" value="50" />
+                  <Picker.Item style={{fontSize: 12}} label="60" value="60" />
+                  <Picker.Item style={{fontSize: 12}} label="70" value="70" />
+                  <Picker.Item style={{fontSize: 12}} label="80" value="80" />
+                  <Picker.Item style={{fontSize: 12}} label="90" value="90" />
+                  <Picker.Item style={{fontSize: 12}} label="100" value="100" />
               </Picker>
               <Picker
-                style={{width:150}}
+                style={{flex: 1}}
                 selectedValue={this.state.metric}
                 onValueChange={(metric) => this.setState({metric})}>
-                  <Picker.Item style={{fontSize: 14}} label="kg" value="kg" />
-                  <Picker.Item style={{fontSize: 14}} label="lbs" value="lbs" />
+                  <Picker.Item style={{fontSize: 12}} label="kg" value="kg" />
+                  <Picker.Item style={{fontSize: 12}} label="lbs" value="lbs" />
               </Picker>
             </View>
             <TouchableOpacity onPress={ this.sendData.bind(this) }>
               <Text>SEND INFORMATION TO FIREBASE</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
-              this.setModalVisible(!this.state.modalVisible)
-            }}>
-              <Text>Hide Modal</Text>
-            </TouchableOpacity>
-          </View>
-          </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-
-
-        <View style={styles.videoContainer}>
-          <TouchableWithoutFeedback onPress={() => {
-            if (this.state.videoRate === 1.0) { this.setState({videoRate: 0})}
-            else {this.setState({videoRate: 1.0})}
-            }}>
-          <Components.Video
-          ref={videoPlayer => this.videoPlayer = videoPlayer}
-          source={{ uri: this.state.videoLink }}
-          isNetwork = {true}
-          rate={this.state.videoRate}
-          volume={1.0}
-          muted={false}
-          onEnd={this.onVideoEnd.bind(this)}
-                       onLoad={this.onVideoLoad.bind(this)}
-          onProgress={this.onProgress.bind(this)}
-          resizeMode="cover"
-          repeat
-          style={{width: Layout.window.width, height: 200}}
-          />
-           
-          </TouchableWithoutFeedback>
-          <ProgressController duration={duration}
-                                          currentTime={currentTime}
-                                          percent={completedPercentage}
-                                          onNewPercent={this.onProgressChanged.bind(this)}/>
-        </View>
-        <View style={styles.container}>
-          <Text style={styles.heading1}>{this.props.route.params.exercise.name}</Text>
-          <Text style={styles.heading1}>{this.props.route.params.exercise.video}</Text>
-          <Tag title={'muscle group'} content={this.props.route.params.exercise.muscles} color={'#000'}/>
-          <Text>You have passed: {this.props.route.params.exercise.type}</Text>
-        </View>
         <TouchableOpacity onPress={() => {
           this.setModalVisible(true)
         }}>
@@ -258,8 +244,6 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     height: Layout.window.height * 0.35,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#920707'
   },
   textInVideo: {

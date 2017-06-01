@@ -3,12 +3,15 @@ import ReactNative from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as firebase from 'firebase';
 import {withNavigation} from '@expo/ex-navigation';
+import Common from '../constants/common';
+import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
-
+import Colors from '../constants/Colors';
 const { View, TouchableHighlight, Text, Image, TouchableOpacity } = ReactNative;
 
 @withNavigation
-class ListItem extends Component {
+class ExerciseItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +32,16 @@ class ListItem extends Component {
 
   displayAlternativeButton = () => {
     if (this.props.item.own) {
-      return (<TouchableOpacity onPress={this.props.onReplace}><Text>Replace exercise</Text></TouchableOpacity>)
+      return (
+      <TouchableOpacity onPress={this.props.onReplace}>
+
+          <Ionicons
+        name={'ios-repeat-outline'}
+        size={32}
+        color={'#B3B3B3'}
+      />
+
+      </TouchableOpacity>)
     }
   }
   
@@ -38,15 +50,19 @@ class ListItem extends Component {
       <TouchableHighlight 
         underlayColor={'#920707'}
         onPress={this.props.onPress}>
-        <View style={styles.exerciseContainer}>
-          <View style={styles.imageContainer}>
-            <Image source={{uri: this.state.uriLink || require('../assets/images/CTA.png')}} style={{flex: 1, resizeMode: 'cover'}}></Image>
+        <View style={[Common.inlineContainer, Common.paddingVertical, Common.sectionBorder]}>
+          <View style={[Common.exerciseThumbnail, Common.shadowMedium]}>
+            <Image source={{uri: this.state.uriLink || require('../assets/images/CTA.png')}} style={Common.imageStyle}/>
           </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>{this.props.item.name || ''}</Text>
-            <Text>{this.props.item.muscles}</Text>
-            <Text>{this.props.item.type}</Text>
-            {this.displayAlternativeButton()}
+          <View style={[Common.inlineContainer]}>
+            <View style={Common.containerText}>
+              <Text style={Common.darkTitleH3}>{this.props.item.name || ''}</Text>
+              <Text style={Common.darkNameTag}>{this.props.item.muscles}</Text>
+              <Text style={Common.darkNameTag}>{this.props.item.type}</Text>
+            </View>
+            <View style={Common.buttonContainer}>
+              {this.displayAlternativeButton()}
+            </View>
           </View>
         </View>
       </TouchableHighlight>
@@ -58,6 +74,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  imageStyle: {
+    flex: 1,
+    resizeMode: 'cover',
+    borderRadius: 3,
+  },
+
   imageContainer: {
     width: 107,
     height: 73,
@@ -81,4 +103,4 @@ const styles = StyleSheet.create({
     marginVertical: 1
   }
 })
-module.exports = ListItem;
+module.exports = ExerciseItem;

@@ -19,10 +19,10 @@ import {
 import { MonoText } from '../components/StyledText';
 import { LoginScreen } from './LoginScreen';
 import Filters from '../components/Filters';
-import CommonStyle from "../constants/common";
+import Common from "../constants/common";
 const StatusBar = require('../components/StatusBar');
 
-const ListItem = require('../components/ListItem');
+const ExerciseItem = require('../components/ExerciseItem');
 const styles = require('../constants/styles.js');
 import Database from '../api/database';
 
@@ -101,7 +101,7 @@ export default class ExercisesScreen extends Component {
           initialListSize = {4}
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
-          style={styles.listview}/>
+          style={[Common.containerLeft, Common.sectionBorder]}/>
          
       </ScrollView>
     )
@@ -116,7 +116,7 @@ export default class ExercisesScreen extends Component {
     })
   }
     return (
-      <ListItem item={item} videoLink={item.video} onPress={goToRoute}/>
+      <ExerciseItem item={item} videoLink={item.video} onPress={goToRoute}/>
     );
   }
 }
