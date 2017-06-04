@@ -6,6 +6,8 @@ import ExerciseItem from '../components/ExerciseItem';
 import WorkoutExercises from '../components/WorkoutExercises';
 import Database from '../api/database';
 import * as firebase from 'firebase';
+import Common from '../constants/common';
+
 export default class ExerciseScreen extends React.Component {
   constructor(props) {
       super(props);
@@ -96,11 +98,10 @@ export default class ExerciseScreen extends React.Component {
             handleContinueProgram = {this.handleContinue.bind(this)}
             style={{flex: 1}}
             />
-        <Text>You have passed: {this.props.route.params.uid}</Text>
         {this._displayLeaveButton()}
-        <Text>Program name: {this.state.programName}</Text>
-        <Text>{this.props.route.params.program.days}</Text>
+        <View style={[Common.container, Common.sectionBorder]}>
         <Text style={styles.textBlackTitle}>Workouts</Text>
+        </View>
         {this.displayWorkoutDays()}
         <Divider/>
       </ScrollView>
@@ -111,9 +112,7 @@ displayWorkoutDays() {
     if (this.state.isLoading) {
         return (<View/>)
     }
-    let workoutExercises = [
-        <TouchableOpacity key={0} onPress = {() => {console.log(this.state.sequence2)}}><Text>PRESS TO GET CURRENT SEQUENCE</Text></TouchableOpacity>
-    ];
+    let workoutExercises = [];
 
     for (i = 1; i <= this.props.route.params.program.days; i++) {
         let day = 'day' + i;
@@ -123,6 +122,7 @@ displayWorkoutDays() {
                 key={i} 
                 dayNumber={i}
                 numberOfExercises={length}
+                muscles={this.props.route.params.program[day]}
                 exercises={this.state.sequence2[day]}
                 program={this.props.route.params.program}/>
         );
@@ -188,6 +188,7 @@ handleClick(bool) {
 
 handleContinue() {
         let index, day, dayNumber;
+        console.log('Triggering db.js from dashboard')
         Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
         Database.getCurrentWorkoutDay( (currentDay) => { dayNumber = currentDay});
         day = 'day' + dayNumber
@@ -210,6 +211,7 @@ _displayLeaveButton() {
                     this._retrieveFilteredItems();
                     this.setOwnPropertyTo(false);
                     AsyncStorage.setItem('ownProgramId', '');
+                    this.setState({programName: 'leaving program'})
                     Database.leaveProgram(this.props.route.params.uid)} }
             ]
         );

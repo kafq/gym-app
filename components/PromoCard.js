@@ -1,41 +1,42 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { Button } from 'react-native-elements';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {Grid, Col, Row} from 'react-native-elements';
+import Common from '../constants/common';
 
 export default function PromoCard({onPress}) {
     
     return (
-      <View style={styles.container}>
-      <Image source={require('../assets/images/CTA2.png')} 
-        resizeMode={Image.resizeMode.fill} style={styles.header}>
-       	 <View>
-            <Text style={styles.title}>Gain Faster with Diary</Text>
-            <Text style={styles.paragraph}>Calories Tracker, Statistics, Calendar and More!
-            </Text>
-            <Button
-            buttonStyle={styles.ActionButton}
-            onPress={onPress}
-  title='Choose Program' />
+      
+        <Image source={require('../assets/images/CTA2.png')} 
+        style={[Common.promotionCard, Common.centered, Common.imageCover, Common.shadowMedium]}>
 
-  		</View>
+<View style={Common.shadowMedium}>
+              <Text style={Common.lightTitleH2}>Gain Faster with Diary</Text>
+           
+              <Text style={Common.lightBodyText}>Calories Tracker, Statistics, Calendar and More!
+              </Text>
 
-        </Image>
-        </View>
+              <TouchableOpacity onPress={onPress} style={Common.lightButtonRounded}>
+                <Text style={Common.lightActionTitle}>Choose Program</Text>
+              </TouchableOpacity>
+              </View>
+          </Image>
+          
     );
   }
 
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 40,
-    width: 350,
-    alignSelf: 'center',
-    backgroundColor: 'transparent',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+//   container: {
+//     marginBottom: 40,
+//     width: 350,
+//     alignSelf: 'center',
+//     backgroundColor: 'transparent',
+//     flexDirection: 'column',
+//     justifyContent: 'center',
+//     alignItems: 'center',
         
- },
+//  },
   title: {
     marginVertical: 30,
     backgroundColor: 'transparent',

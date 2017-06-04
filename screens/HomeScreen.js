@@ -19,6 +19,7 @@ import PromoCard from '../components/PromoCard';
 import HeroCard from '../components/HeroCard';
 import * as firebase from 'firebase';
 import Database from '../api/database';
+import Common from '../constants/common';
 
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -106,10 +107,14 @@ retrieveUserId() {
     return (
      <ScrollView>
        {this.renderCard()}
-       <Text style={styles.title}>Most Popular Programs</Text>
-       <TouchableOpacity onPress={() => {this.props.navigator.push('styles')}}><Text>View styles</Text></TouchableOpacity>
-       <ProgramsList />
-        <View style={styles.bgRectangular} />
+       <TouchableOpacity onPress={() => {this.props.navigator.push('styles')}}>
+         <Text style={{opacity: 0.3}}>View styles</Text>
+       </TouchableOpacity>
+        <View style={Common.containerLeft}>
+            <Text style={Common.darkTitleH1}>Seasonal products</Text>
+       </View>
+       <ProgramsList style={Common.sectionBorder}/>
+
         <PromoCard onPress={this.goToSomewhere}/>
         <PromoCard onPress={this.goToSomewhere}/>
       </ScrollView>

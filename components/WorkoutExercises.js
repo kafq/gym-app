@@ -1,7 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import {withNavigation} from '@expo/ex-navigation';
-import Layout from '../constants/Layout'
+import Layout from '../constants/Layout';
+import Common from '../constants/common';
+import BigTag from '../components/BigTag';
+
 @withNavigation
 class WorkoutExercises extends Component {
   constructor(props) {
@@ -31,38 +34,20 @@ getDayOrder() {
 }
     
 render() {
-    const {dayNumber, exercises, program, numberOfExercises} = this.props;
+    const {dayNumber, exercises, program, numberOfExercises, muscles} = this.props;
     return (
-        <View style={styles.dayExercisesContainer}>
+        <View style={[Common.container, Common.sectionBorder]}>
             <TouchableOpacity onPress={() => {this.goToAllExercises()}}>
                 <View>
-                    <Text style={styles.title}>{this.getDayOrder()} day</Text>
-                    <Text style={styles.subtitle}>{this.props.numberOfExercises} exercises</Text>
+                    <Text style={Common.darkTitleH2}>{this.getDayOrder()} day</Text>
+                    <Text style={Common.darkBodyText}>{this.props.muscles}</Text>
+                    <Text style={Common.darkBodyText}>{this.props.numberOfExercises} exercises</Text>
                 </View>
                     </TouchableOpacity>
         </View> 
     );
   }
 }
-
-const styles = StyleSheet.create({
-    dayExercisesContainer: {
-        height: 70,
-        justifyContent: 'center',
-        borderBottomColor: '#CDCDCD',
-        borderBottomWidth: 0.5,
-        paddingHorizontal: Layout.window.width * 0.08,
-    },
-   newsScroll: {
-    backgroundColor: 'transparent',
-  },
-  title: {
-      fontSize: 20
-  },
-  subtitle: {
-      fontSize: 16
-  }
-  });
 
 export default WorkoutExercises;
 

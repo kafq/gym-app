@@ -6,7 +6,9 @@ import Tag from '../components/Tag';
 import BigTag from '../components/BigTag';
 import {Grid, Row, Col} from 'react-native-elements';
 import Layout from '../constants/Layout';
-import Theme from '../constants/Theme'
+import Theme from '../constants/Theme';
+import LogItem from '../components/LogItem';
+import ProgramItem from '../components/ProgramItem';
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryLine } from "victory-native";
 export default class StyleScreen extends React.Component {
   
@@ -109,31 +111,67 @@ const LineData = [
             <Tag title={'item 3'} content={'Biceps'} color={'#000'}/>
             <Tag title={'item 4'} content={'Biceps'} color={'#000'}/>
         </View>
-        <View style={[Common.inlineContainer, Common.sectionBorder, Common.coloredViewDark, Common.paddingVertical]}>
-            <BigTag title={'days per week'} content={'20'} color={'#fff'}/>
-            <BigTag title={'days overall'} content={'30'} color={'#fff'}/>
-        </View>
         <Text style={Common.darkTitleDisplay}>Grids</Text>
         <View style={Common.sectionBorder}>
-            <Grid style={{height: Layout.window.height - 70, flex: 1}}>
-                <Row containerStyle={{flex: 1}} size={33}>
-                    <View style={[Common.coloredView, Common.container]}>
-                        <Text>1</Text>
-                    </View>
-                </Row>
-                <Row size={33}><Text>2</Text></Row>
-                <Row size={33}>
+            <Grid style={{height: Layout.window.height * 0.4, flex: 1}}>
+                <Col containerStyle={{flex: 1}} size={1}>
+                   
+                         <BigTag 
+                        title={'days overall'}
+                        content={'70'} label={'kg'}
+                        color={'#000'}/>
+                </Col>
+                <Col size={1}>
+                     <BigTag 
+                        title={'days overall'}
+                        content={'70'} label={'kg'}
+                        color={'#000'}/>
+                </Col>
+                <Col size={1}>
                     <View style={Common.coloredView}>
-                        <Text>3</Text>
+                         <BigTag 
+                        title={'days overall'}
+                        content={'70'} label={'kg'}
+                        color={'#000'}/>
                     </View>
-                </Row>
+                </Col>
             </Grid>
         </View>
+                        <LogItem
+                    titleText={'Total'}
+                    title={'50'}
+                    weight={120}
+                />
+                <View style={[Common.container, Common.sectionBorder]}>
+                <View style={[Common.inlineContainer, Common.brightStats, Common.centered, Common.shadowBright]}>
+                   <Grid>
+                        <Col>
+                            <BigTag
+                                title='total exercises'
+                                content={'34'}
+                                color='#fff'
+                                />
+                        </Col>
+                        <Col>
+                            <BigTag
+                            title='workouts done'
+                            content='22'
+                            color='#fff'/>
+                        </Col>
+                        <Col>
+                            <BigTag
+                                title='workouts done'
+                                content='22'
+                                color='#fff'/>
+                        </Col>
+                    </Grid> 
+                </View>
+                </View>
         <Grid>
             <Col size={2}>
-                <View style ={[ Common.paddingVertical, Common.coloredView]}>
+                <View style ={[Common.minusHorizontal, Common.paddingVertical]}>
                     <VictoryChart
-                        theme={Theme.grayscale}
+                        theme={Theme}
                         width={Layout.width.l}
                         height={Layout.width.m}
                         domainPadding={Layout.gutter.l}
@@ -143,6 +181,9 @@ const LineData = [
                         tickValues={["Mo", "Tu", "We", "Th", "Fr", "St", "Su"]}
                         tickFormat={["Mo", "Tu", "We", "Th", "Fr", "St", "Su"]}
                         offsetX={0}
+                        style={{
+                            grid: {stroke: "#ECECEC", strokeWidth: Layout.gutter.m + Layout.gutter.xs}
+                        }}
                         />
                     <VictoryAxis
                         dependentAxis
@@ -150,8 +191,9 @@ const LineData = [
                         />
                     <VictoryBar
                         style={{
-                            data: {fill: "#CE0606", width: Layout.gutter.m}
+                            data: {fill: "#CE0606", width: Layout.gutter.m+ Layout.gutter.xs},
                         }}
+                        
                         data={data}
                         x="day"
                         y="exercises"
@@ -161,17 +203,38 @@ const LineData = [
             </Col>
             <Col size={1}>
                 <View style={[Common.containerLeft, Common.paddingVertical]}>
-                <BigTag 
-                    title={'days overall'}
-                    content={'70'} label={'kg'}
-                    color={'#000'}/>
-                <BigTag
-                    title={'days overall'}
-                    content={'30'}
-                    color={'#000'}/>
+                    <BigTag 
+                        title={'days overall'}
+                        content={'70'} label={'kg'}
+                        color={'#000'}/>
+                    <BigTag
+                        title={'days overall'}
+                        content={'30'}
+                        color={'#000'}/>
                 </View>
             </Col>
         </Grid>
+        <View style={Common.containerLeft}>
+            <Text style={Common.darkTitleH1}>Seasonal products</Text>
+            <ScrollView
+                pagingEnabled
+                horizontal>
+                <ProgramItem 
+                    title={'Monster'}
+                    description={'Lorem ipsum dolor sit amet, consectetur adipisci elit, sed.'}/>
+                <ProgramItem
+                    title={'No need a gun'}
+                    description={'Lorem ipsum dolor sit amet.'}/>
+                <ProgramItem
+                    title={'Diamond Abs'}
+                    description={'Lorem ipsum dolor sit amet, consectetur adipisci elit.'}/>
+                <ProgramItem
+                    title={'Summer Chest'}
+                    description={'Lorem ipsum dolor sit amet, consectetur adipisci elit.'}/>
+            </ScrollView>
+        </View>
+        <View>
+        </View>
       </ScrollView>
     );
   }

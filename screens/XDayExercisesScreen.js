@@ -12,6 +12,7 @@ import {
 
 import Database from '../api/database';
 import ExerciseItem from '../components/ExerciseItem';
+import Common from '../constants/common';
 
 export default class XDAYExercisesScreen extends Component {
   constructor(props) {
@@ -41,13 +42,14 @@ async componentDidMount() {
   render() {
     return (
      <ScrollView>
-       <Text>Most Popular Programs</Text>
-
-        <Text>{this.props.route.params.dayNumber}</Text>
+       <View style={[Common.container]}>
+       <Text style={Common.darkTitleH1}>Most Popular Programs</Text>
+       <Text style={Common.darkBodyText}>Exercises for {this.props.route.params.dayNumber} day. Lorem ipsum dolor sit amet consecutur</Text>
         <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderItem.bind(this)}
                     enableEmptySections={true}/>
+                    </View>
       </ScrollView>
     );
   }

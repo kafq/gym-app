@@ -7,6 +7,7 @@ import ExerciseItem from '../components/ExerciseItem';
 import BigTag from '../components/BigTag';
 import { Font } from 'expo';
 import Database from '../api/database';
+import Common from '../constants/common';
 
 @withNavigation
 export default class ProgramBadge extends Component {
@@ -56,23 +57,24 @@ export default class ProgramBadge extends Component {
     )
   }
   showContinueExercise() {
-   
-    let index = 1;
-    let dayNumber = '';
-    let day = '';
-    Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
-    Database.getCurrentWorkoutDay( (currentDay) => { dayNumber = currentDay});
-    day = 'day' + dayNumber;
-    continueProgram = () => {
-         this.props.handleContinueProgram();
-    }
 
     switch (this.props.programName) { 
         case this.props.program._key:
-
+            let index = 1;
+            let dayNumber = '';
+            let day = '';
+            console.log('Program name is ' + this.props.programName + ' and program key is ' + this.props.program._key)
+            console.log('About to trigger Database.js');
+            Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
+            Database.getCurrentWorkoutDay( (currentDay) => { dayNumber = currentDay});
+            day = 'day' + dayNumber;
+            continueProgram = () => {
+                this.props.handleContinueProgram();
+            }
             return (
-                <View>
-                    <ExerciseItem onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]}/>
+                <View style={[Common.container, Common.sectionBorder]}>
+                    <Text style={Common.darkTitleH1}>Continue your workout</Text>
+                    <ExerciseItem showSeparator={false} onPress={() => {continueProgram()}} item = {this.props.sequence[day][index]} own={false}/>
                 </View>
             )
         default: return( <View/> )
@@ -82,10 +84,11 @@ export default class ProgramBadge extends Component {
 
 _displayEnrollButton() {
     enrollProgram = () => {
+        let emptyArr = [];
         Database.enrollIntoProgram(this.props.program);
         Database.saveExerciseSequence(this.props.sequence);
         AsyncStorage.setItem('ownProgram', JSON.stringify(this.props.program));
-        AsyncStorage.setItem('logs', []);
+        AsyncStorage.setItem('logs', JSON.stringify(emptyArr));
         this.props.handleClick(true);
     }
     goToRoute = () => {
@@ -100,14 +103,14 @@ _displayEnrollButton() {
     switch (this.props.programName) {
         case '':
             return(
-                    <TouchableOpacity style={styles.actionButton} onPress={enrollProgram}>
-                        <Text style={styles.buttonTitle} >ENROLL RIGHT NOW</Text>
+                    <TouchableOpacity style={Common.lightButtonRounded} onPress={enrollProgram}>
+                        <Text style={Common.lightActionTitle}>Enroll into program</Text>
                     </TouchableOpacity>
             );
         case this.props.program._key:
             return(
-                    <TouchableOpacity style={styles.actionButton} onPress={goToRoute}>
-                        <Text style={styles.buttonTitle}>EDIT THE PROGRAM</Text>
+                    <TouchableOpacity style={Common.lightButtonRounded} onPress={goToRoute}>
+                        <Text style={Common.lightActionTitle}>Edit the program</Text>
                     </TouchableOpacity>
             );
         default: 

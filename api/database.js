@@ -67,7 +67,7 @@ class Database {
             firebase.database().ref(path).set({
                 exercises,
                 currentExerciseIndex: 0,
-                currentWorkoutDay: 'day1'
+                currentWorkoutDay: 1
             })
     }
 
@@ -129,6 +129,7 @@ class Database {
     
     static getCurrentExerciseIndex(callback) {
         let uid = firebase.auth().currentUser.uid;
+        console.log('Triggered getCurrentExerciseIndex');
         let path = '/user/' + uid + '/ownProgram/exerciseSequence/';
         firebase.database().ref(path).on('value', (snap) => {
             console.log(snap.val());
@@ -162,10 +163,15 @@ class Database {
     static pushWorkoutLog(log){
         let uid = firebase.auth().currentUser.uid;
         let path = '/user/' + uid + '/workoutLogs/' + Date.now();
+        let totalWeight = 0;
+        log.forEach((logItem) => {
+            totalWeight+=parseInt(logItem.weight)
+        })
         firebase.database().ref(path).set({
             ...log,
             workoutCompleted: moment().format(),
             amountOfExercisesCompleted: log.length,
+            totalWeight
         })
     }
     static rateWorkout(rate){
@@ -198,7 +204,7 @@ class Database {
             currentWorkoutDay: dayNumber + 1
         })
     }
-    static addExerciseStats(exerciseId, weight, metric, ownExercise) {
+    static addExerciseStats(exerciseId, weight, sets, reps, metric, ownExercise) {
         let uid = firebase.auth().currentUser.uid;
 
         let path = "/user/" + uid + "/statistics";
@@ -206,6 +212,8 @@ class Database {
         firebase.database().ref(path2).set({
             exerciseId,
             weight,
+            sets,
+            reps,
             metric,
             date: Date.now()
         });

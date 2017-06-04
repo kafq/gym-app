@@ -126,7 +126,6 @@ export default class DiaryScreen extends React.Component {
           exercisesSource: this.state.exercisesSource.cloneWithRows(_.flatten(logsId))
       });
 
-  console.log(logsId)
 };
 
   render() {

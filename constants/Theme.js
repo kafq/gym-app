@@ -1,35 +1,8 @@
-/*
-  "grayscale" theme (VictoryTheme.grayscale)
-  The grayscale is the default theme.
-  Try changing it. You could start with `colors` or `fontSize`.
-*/
+import { assign } from "lodash";
 
-if (typeof Object.assign != 'function') {
-  Object.assign = function(target, varArgs) { // .length of function is 2
-    'use strict';
-    if (target == null) { // TypeError if undefined or null
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-
-    var to = Object(target);
-
-    for (var index = 1; index < arguments.length; index++) {
-      var nextSource = arguments[index];
-
-      if (nextSource != null) { // Skip over if undefined or null
-        for (var nextKey in nextSource) {
-          // Avoid bugs when hasOwnProperty is shadowed
-          if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-    }
-    return to;
-  };
-}
-
-// Colors
+// *
+// * Colors
+// *
 const colors = [
   "#252525",
   "#525252",
@@ -40,22 +13,25 @@ const colors = [
   "#f0f0f0"
 ];
 
-const charcoal = "#252525";
-
-// Typography
-const sansSerif = "'Gill Sans', 'Gill Sans MT', 'Ser­avek', 'Trebuchet MS', sans-serif";
+const charcoal = "#CDCDCD";
+// *
+// * Typography
+// *
+const sansSerif = "sans-serif";
 const letterSpacing = "normal";
 const fontSize = 14;
-
-// Layout
+// *
+// * Layout
+// *
 const baseProps = {
   width: 450,
-  height: 300,
-  padding: 50,
+  height: 250,
+  padding: 40,
   colorScale: colors
 };
-
-// Labels
+// *
+// * Labels
+// *
 const baseLabelStyles = {
   fontFamily: sansSerif,
   fontSize,
@@ -66,13 +42,13 @@ const baseLabelStyles = {
 };
 
 const centeredLabelStyles = assign({ textAnchor: "middle" }, baseLabelStyles);
-
-// Strokes
+// *
+// * Strokes
+// *
 const strokeLinecap = "round";
 const strokeLinejoin = "round";
 
-// Create the theme
-const theme = {
+export default {
   area: assign({
     style: {
       data: {
@@ -95,7 +71,8 @@ const theme = {
       }),
       grid: {
         fill: "transparent",
-        stroke: "transparent"
+        stroke: "transparent",
+        pointerEvents: "none"
       },
       ticks: {
         fill: "transparent",
@@ -110,7 +87,6 @@ const theme = {
       data: {
         fill: charcoal,
         padding: 10,
-        stroke: "transparent",
         strokeWidth: 0,
         width: 8
       },
@@ -151,9 +127,7 @@ const theme = {
         stroke: charcoal,
         strokeWidth: 2
       },
-      labels: assign({}, baseLabelStyles, {
-        textAnchor: "start"
-      })
+      labels: centeredLabelStyles
     }
   }, baseProps),
   pie: {
@@ -163,9 +137,7 @@ const theme = {
         stroke: "transparent",
         strokeWidth: 1
       },
-      labels: assign({}, baseLabelStyles, {
-        padding: 20
-      })
+      labels: assign({}, baseLabelStyles, { padding: 20 })
     },
     colorScale: colors,
     width: 400,
@@ -185,25 +157,17 @@ const theme = {
   stack: assign({
     colorScale: colors
   }, baseProps),
-  tooltip: assign({
-    style: {
-      data: {
-        fill: "transparent",
-        stroke: "transparent",
-        strokeWidth: 0
-      },
-      labels: centeredLabelStyles,
-      flyout: {
-        stroke: charcoal,
-        strokeWidth: 1,
-        fill: "#f0f0f0"
-      }
+  tooltip: {
+    style: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: "none" }),
+    flyoutStyle: {
+      stroke: charcoal,
+      strokeWidth: 1,
+      fill: "#f0f0f0",
+      pointerEvents: "none"
     },
-    flyoutProps: {
-      cornerRadius: 10,
-      pointerLength: 10
-    }
-  }, baseProps),
+    cornerRadius: 5,
+    pointerLength: 10
+  },
   voronoi: assign({
     style: {
       data: {
@@ -211,9 +175,22 @@ const theme = {
         stroke: "transparent",
         strokeWidth: 0
       },
-      labels: centeredLabelStyles
+      labels: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: "none" }),
+      flyout: {
+        stroke: charcoal,
+        strokeWidth: 1,
+        fill: "#f0f0f0",
+        pointerEvents: "none"
+      }
     }
-  }, baseProps)
+  }, baseProps),
+  legend: {
+    colorScale: colors,
+    style: {
+      data: {
+        type: "circle"
+      },
+      labels: baseLabelStyles
+    }
+  }
 };
-
-module.exports = theme;

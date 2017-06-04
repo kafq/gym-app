@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Notifications } from 'expo';
 import {
   StackNavigation,
@@ -7,7 +7,7 @@ import {
   TabNavigationItem,
 } from '@expo/ex-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-
+import Layout from '../constants/Layout'
 import Alerts from '../constants/Alerts';
 import Colors from '../constants/Colors';
 import registerForPushNotificationsAsync
@@ -35,6 +35,16 @@ export default class RootNavigation extends React.Component {
           renderIcon={isSelected => this._renderIcon('book', isSelected)}>
           <StackNavigation initialRoute="exercises" />
         </TabNavigationItem>
+       
+        {/*<TabNavigationItem
+          id="diary2"
+          renderIcon={isSelected=> this._renderIcon('book')}>
+          <View style={{position: 'absolute', top: 100, left: 30}}> 
+          <View style={{ backgroundColor: 'red', width: 50, height: 50, zIndex: 1000, borderRadius: 100}}>
+            <TouchableOpacity onPress={() => {console.log(228)}}><Text>1234</Text></TouchableOpacity>
+          </View>
+          </View>
+        </TabNavigationItem>*/}
 
         <TabNavigationItem
           id="diary"

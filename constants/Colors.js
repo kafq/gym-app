@@ -14,5 +14,6 @@ export default {
   borderColor: '#CDCDCD',
   darkTitleTextColor: '#000',
   darkBodyTextColor: 'rgba(0,0,0,0.4)',
-  lightTitleTextColor: '#fff'
+  lightTitleTextColor: '#fff',
+  lightBodyTextColor: 'rgba(255,255,255,0.7)'
 };

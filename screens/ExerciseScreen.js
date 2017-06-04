@@ -16,8 +16,10 @@ export default class ExerciseScreen extends React.Component {
     super(props);
     this.state = {
       modalVisible: false,
-      weight: '50',
+      weight: '70',
       metric: 'kg',
+      sets: '3',
+      reps: '3',
       videoLink: 'https://',
       videoRate: 1.0
     }
@@ -50,7 +52,7 @@ export default class ExerciseScreen extends React.Component {
     this.setState({modalVisible: visible});
   }
   sendData() {
-    Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric);
+    Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.sets, this.state.reps, this.state.metric);
   }
    
    renderNextButton = () => {
@@ -58,7 +60,7 @@ export default class ExerciseScreen extends React.Component {
        if (!this.state.paused) {
        this.setState({paused: !this.state.paused})
        }
-       Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.metric, true);
+       Database.addExerciseStats(this.props.route.params.exercise._key, this.state.weight, this.state.sets, this.state.reps, this.state.metric, true);
        let index = 0;
        Database.getCurrentExerciseIndex( (currentIndex) => {index = currentIndex});
        let oldLog = this.props.route.params.logs
@@ -201,22 +203,38 @@ export default class ExerciseScreen extends React.Component {
         </View>
         <View style={Common.inlineContainer}>
               <Picker
+                itemStyle={{fontSize: 16}}
                 style={{flex: 1}}
                 selectedValue={this.state.weight}
                 onValueChange={(number) => this.setState({weight: number})}>
-                  <Picker.Item style={{fontSize: 12}} label="50" value="50" />
-                  <Picker.Item style={{fontSize: 12}} label="60" value="60" />
-                  <Picker.Item style={{fontSize: 12}} label="70" value="70" />
-                  <Picker.Item style={{fontSize: 12}} label="80" value="80" />
-                  <Picker.Item style={{fontSize: 12}} label="90" value="90" />
-                  <Picker.Item style={{fontSize: 12}} label="100" value="100" />
+                  <Picker.Item label="50kg" value="50" />
+                  <Picker.Item label="60kg" value="60" />
+                  <Picker.Item label="70kg" value="70" />
+                  <Picker.Item label="80kg" value="80" />
+                  <Picker.Item label="90kg" value="90" />
+                  <Picker.Item label="100kg" value="100" />
               </Picker>
               <Picker
+                itemStyle={{fontSize: 16}}
                 style={{flex: 1}}
-                selectedValue={this.state.metric}
-                onValueChange={(metric) => this.setState({metric})}>
-                  <Picker.Item style={{fontSize: 12}} label="kg" value="kg" />
-                  <Picker.Item style={{fontSize: 12}} label="lbs" value="lbs" />
+                selectedValue={this.state.sets}
+                onValueChange={(sets) => this.setState({sets})}>
+                  <Picker.Item label="1 rep" value="1" />
+                  <Picker.Item label="2 reps" value="2" />
+                  <Picker.Item label="3 reps" value="3" />
+                  <Picker.Item label="4 reps" value="4" />
+                  <Picker.Item label="5 reps" value="5" />
+              </Picker>
+              <Picker
+                itemStyle={{fontSize: 16}}
+                style={{flex: 1}}
+                selectedValue={this.state.reps}
+                onValueChange={(reps) => this.setState({reps})}>
+                  <Picker.Item label="1 set" value="1" />
+                  <Picker.Item label="2 sets" value="2" />
+                  <Picker.Item label="3 sets" value="3" />
+                  <Picker.Item label="4 sets" value="4" />
+                  <Picker.Item label="5 sets" value="5" />
               </Picker>
             </View>
             <TouchableOpacity onPress={ this.sendData.bind(this) }>

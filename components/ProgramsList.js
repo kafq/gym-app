@@ -3,8 +3,6 @@ import { View, Text, StyleSheet, ScrollView, ListView, Keyboard } from "react-na
 
 import ProgramItem from './ProgramItem'
 
-
-
 class ProgramsList extends Component {
 
 
@@ -40,9 +38,11 @@ class ProgramsList extends Component {
         enableEmptySections 
         dataSource={this.state.dataSource}
         onScroll={() => Keyboard.dismiss()}
-        renderRow={(article) => {
+        renderRow={(article, sectionID, rowID) => {
             return (
                 <ProgramItem
+                    key={rowID}
+                    id={rowID}
                     title={article.name}
                     description={article.description}
                 />

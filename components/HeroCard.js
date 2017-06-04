@@ -3,33 +3,64 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from "r
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 import Layout from '../constants/Layout';
-
-
-
+import Common from '../constants/common';
+import BigTag from '../components/BigTag';
+import {Grid, Col, Row} from 'react-native-elements';
 
 @withNavigation
 class HeroCard extends Component {
 
-
   render() {
     return (
-        <View style={styles.container}>
-      <Image source={require('../assets/images/CTA.png')} 
-        style={styles.header}>
-       	 <View style={styles.HeroContainer}>
-            <Text style={styles.title}>YOUR PROGRAM</Text>
-            <Text style={styles.title}>{this.props.program.programName} </Text>
-            <Text style={styles.paragraph}>done this week{"\n"}props.days</Text>
-            <Text style={styles.paragraph}>this.props.programmname</Text>
-            <Button
-            buttonStyle={styles.ActionButton}
-            onPress={() => {this.goToProgram('programDashboard')}}
-            title='Continue Program' />
-            <TouchableOpacity style={styles.transparent} onPress={() => {this.goToAllPrograms()}}><Text style={styles.textWhite}>All programs</Text></TouchableOpacity>
-  		</View>
 
-        </Image>
-        </View>
+          <Image
+            source={require('../assets/images/CTA.png')} 
+            style={Common.imageCover}>
+            <View style={[Common.container, Common.paddingVertical]}>
+            <Grid>
+              <Row size={1}>
+               
+                    <View>
+                      <Text style={[Common.lightTitleH4, Common.removeMarginBetweenTitles]}>YOUR PROGRAM</Text>
+                      <Text style={[Common.lightTitleH1, Common.removeMarginBetweenTitles]}>Basic shoulders gain  
+                      </Text>
+                    </View>
+              </Row>
+              <Row size={1}>
+
+                      <Col>
+                        <View style={{justifyContent: 'center'}}>
+                        <BigTag
+                        title={'Done this week'}
+                        content={'3'}
+                        color={'#fff'}
+                        />
+                        </View>
+                      </Col>
+                      <Col>
+                      <View style={{justifyContent: 'center'}}>
+                        <BigTag
+                        title={'Exercises left'}
+                        content={'12'}
+                        color={'#fff'}
+                        />
+                        </View>
+                      </Col>
+
+                  </Row>
+                  <Row size={1}>
+                    <View style={{justifyContent: 'center'}}>
+                      <TouchableOpacity
+                        style={[Common.lightButtonRounded, Common.shadowMedium]}
+                        onPress={() => {this.goToAllPrograms()}}>
+                        <Text style={Common.lightActionTitle}>Continue Program</Text>
+                      </TouchableOpacity>
+                      {/*<TouchableOpacity style={styles.transparent} onPress={() => {this.goToAllPrograms()}}><Text style={styles.textWhite}>All programs</Text></TouchableOpacity>*/}
+                    </View>
+                    </Row>
+                </Grid>
+                </View>
+     </Image>
     );
   }
   goToProgram = async () => {
@@ -44,7 +75,6 @@ class HeroCard extends Component {
     })
     await AsyncStorage.getItem("ownProgram").then(program => {
       ownProgram = JSON.parse(program);
-      console.log(ownProgram);
     })
    
       this.props.navigator.push('programDashboard', {
@@ -58,73 +88,4 @@ class HeroCard extends Component {
   
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 0
- },
- textWhite: {
-  color: 'transparent'
- },
-  HeroContainer: {
-    marginHorizontal: 30,
-    marginTop: 13,
-    flex: 3,
-    justifyContent: 'flex-start',
-  },
-  title: {
-    marginBottom: 20,
-    backgroundColor: 'transparent',
-    color: '#FFFFFF',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    fontSize: 24,
-  },
-  transparent: {
-    backgroundColor: 'transparent'
-  },
-  paragraph: {
-    backgroundColor: 'transparent',
-    color: '#FFFFFF',
-    alignSelf: 'flex-start',
-    fontSize: 14,
-    letterSpacing: 0,
-    //lineHeight: 18,
-    opacity: 0.8,
-  },
-  paragraphRight: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'transparent',
-    color: '#FFFFFF',
-    marginTop: -90,
-    marginBottom: 0,
-  },
-  header: {
-    resizeMode: 'cover',
-    width: Layout.window.width,
-  },
-  ActionButton: {
-      width: 200,
-      borderRadius: 100,
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      alignSelf: 'flex-start',
-      marginTop: 30,
-      marginLeft: 0,
-      paddingLeft: 0,
-      backgroundColor: 'transparent'
-  }
-  
-});
-
 export default HeroCard;
-
-
-/* Mask: */
-// background: #FFFFFF;
-// box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
-// border-radius: 6px;
-/* Bitmap: */

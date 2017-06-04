@@ -20,12 +20,13 @@
     "react-native": "https://github.com/exponent/react-native/archive/sdk-14.0.0.tar.gz",
     "react-native-calendar-strip": "^0.1.4",
     "react-native-elements": "^0.9.7",
+    "react-native-extended-stylesheet": "^0.4.0",
     "react-native-fbsdk": "^0.5.0",
     "react-native-flexi-radio-button": "^0.1.10",
     "react-native-swiper": "^1.5.4",
     "react-native-video": "^1.0.0",
     "react-native-video-player": "^0.6.1",
-    "victory-native": "^0.7.1"
+    "victory-native": "0.18.0"
   },
   "devDependencies": {
     "eslint": "^3.19.0",
