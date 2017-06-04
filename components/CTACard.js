@@ -1,14 +1,22 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { ActivityIndicator, View, Text, StyleSheet, Image } from "react-native";
 import { Button } from 'react-native-elements';
 import { withNavigation } from '@expo/ex-navigation';
 
 @withNavigation
 class CTACard extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+    loading: true,
+  }
+  }
   render() {
     return (
         <View style={styles.container}>
-      <Image source={require('../assets/images/CTA.png')} 
+      <Image
+      source={require('../assets/images/CTA.png')}
+      onLoadEnd={()=> { this.setState({ loading: false })}} 
         style={styles.header}>
        	 <View>
             <Text style={styles.title}>Why not start rightnow?</Text>
@@ -21,7 +29,12 @@ class CTACard extends Component {
   title='Choose Program' />
 
   		</View>
-
+{this.state.loading && <View style={styles.loading}>
+            <ActivityIndicator
+                animating
+                size="large"
+            />
+        </View>}
         </Image>
         </View>
     );
@@ -70,7 +83,18 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       marginTop: 30,
       backgroundColor: 'transparent'
-  }
+  },
+  loading: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0,0,0,.2)"
+
+    },
   
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, ListView, AsyncStorage } from 'react-native';
+import { ScrollView, StyleSheet, Text, ListView, AsyncStorage, ActivityIndicator, View } from 'react-native';
 
 
 import CalendarStrip from 'react-native-calendar-strip';
@@ -9,48 +9,48 @@ import LogItem from '../components/LogItem';
 import ExerciseItem from '../components/ExerciseItem'
 var _ = require('lodash');
 
-export default class DiaryScreen extends React.Component {
+export default class LinksScreen extends React.Component {
   static route = {
     navigationBar: {
       title: 'Diary',
     },
   };
 
-  componentDidMount() {
-    
-      Database.listeningForLogs(this.state.currentDay, (log) => {
-        this.setState({
-          dateLog: log,
-          dataSource: this.state.dataSource.cloneWithRows(log)
-      })
-    });
-      let timeout = setTimeout( () => {
-        if (this.state.dataSource.getRowCount() !== 0) {
-          this.setState({
-          hasData: true,
-      })
-        }
-        else {
-          this.setState({
-          hasData: false,
-      })
-        }
-      }, 1000)
-      
-      AsyncStorage.getItem("exercises").then((json) => {
+  componentWillMount() {
+     AsyncStorage.getItem("exercises").then((json) => {
       try {
         const exercises = JSON.parse(json);
         this.setState({
           exercises
         });
       } catch(e) {
-        
+        console.log(e);
       }
-
-    
-      
   })
   
+  }
+  componentDidMount() {
+    
+      Database.listeningForLogs(this.state.currentDay, (log) => {
+        this.setState({
+          dateLog: log,
+          dataSource: this.state.dataSource.cloneWithRows(log),
+      }, function dateLogUpdated () {
+         this.filterExercises();
+      })
+      if (this.state.dataSource.getRowCount() !== 0) {
+          this.setState({
+          hasData: true,
+          loading: false
+      })
+        }
+        else {
+          this.setState({
+          hasData: false,
+          loading: false
+      })
+        }
+    }); 
   }
 
   constructor(props){
@@ -63,46 +63,39 @@ export default class DiaryScreen extends React.Component {
     dataSource: ds.cloneWithRows([]),
     exercisesSource: ds.cloneWithRows([]),
     hasData: false,
-    exercises: []
+    exercises: [],
+    loading: true,
   }
   this.filterExercises = this.filterExercises.bind();
   }
 
   onDateChange = (i) => {
-    this.filterExercises();
-    this.setState({ 
+    this.setState({
+      loading: true,
       currentDay: i.format('MM-DD-YY'),
-    });
-    
-    let timeout = setTimeout( () => {
-      
+    }, function dateLogUpdated () {
+
       Database.listeningForLogs(this.state.currentDay, (log) => {
         this.setState({
           dateLog: log,
           dataSource: this.state.dataSource.cloneWithRows(log),
+      }, function dateLogUpdated () {
+         this.filterExercises();
       })
-    });
-    }, 100);
-
-
-    
-    let timeout2 = setTimeout( () => {
-        if (this.state.dataSource.getRowCount() > 0) {
+      if (this.state.dataSource.getRowCount() !== 0) {
           this.setState({
           hasData: true,
-      });
+          loading: false
+      })
         }
         else {
           this.setState({
           hasData: false,
+          loading: false
       })
-        };
-      }, 500)
-
-      
-
-      
-    
+        }
+    }); 
+    }) 
   }
 
   _renderItem(item) {
@@ -120,12 +113,19 @@ export default class DiaryScreen extends React.Component {
     var logsId = this.state.dateLog.map((item) => {
       return( _.filter(this.state.exercises, {'_key': item.id}) )
     });
-    
-    
     this.setState({
           exercisesSource: this.state.exercisesSource.cloneWithRows(_.flatten(logsId))
       });
-
+      if (this.state.exercisesSource.getRowCount() > 0) {
+          this.setState({
+          hasData: true,
+      });
+        }
+        else {
+          this.setState({
+          hasData: false,
+      })
+        }
 };
 
   render() {
@@ -148,11 +148,8 @@ export default class DiaryScreen extends React.Component {
     )
 
     const randomTips = (
-                <Text>You have not done any workout this day</Text>
+                <Text>Try to eat more protein today to recover</Text>
     )
-
-    
-
     return (
       <ScrollView
         style={styles.container}
@@ -170,12 +167,15 @@ export default class DiaryScreen extends React.Component {
                     onDateSelected={(i) => this.onDateChange(i)}
                     styleWeekend={false}
                 />
-                
-                
-                 
+                 {this.state.loading && <View style={styles.loading}>
+            <ActivityIndicator
+                animating
+                size="large"
+            />
+        </View>}        
               {emptyList}
-              {this.state.hasData ? workoutList : randomTips}
-              
+              {workoutList}
+              {randomTips}
       </ScrollView>
     );
   }
@@ -191,4 +191,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: 20,
   },
+  loading: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0,0,0,.2)"
+
+    }
 });
